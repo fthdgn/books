@@ -1,0 +1,3 @@
+[submodule "google-books-api"]
+	path = google-books-api
+	url = https://github.com/fthdgn/google-books-api.git

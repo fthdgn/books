@@ -1,0 +1,13 @@
+.gradle
+/.idea/*
+/build
+/captures
+/local.properties
+
+#File types
+*.iml
+*.apk
+.DS_Store
+
+#Keep code styling
+!/.idea/codeStyleSettings.xml
