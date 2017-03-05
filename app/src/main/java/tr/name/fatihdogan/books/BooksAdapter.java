@@ -1,10 +1,6 @@
 package tr.name.fatihdogan.books;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import java.io.File;
@@ -29,27 +25,17 @@ class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.ViewHolder> {
 
         private BookView bookView;
 
-        ViewHolder(View v) {
+        ViewHolder(BookView v) {
             super(v);
-            bookView = (BookView) v.findViewById(R.id.bookView);
-            bookView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("https://play.google.com/books/reader?id=" + v.getTag()));
-                    bookView.getContext().startActivity(intent);
-                }
-            });
+            bookView = v;
         }
 
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.viewholder_book, parent, false);
-        return new ViewHolder(v);
+        BookView bookView = new BookView(parent.getContext());
+        return new ViewHolder(bookView);
     }
 
     @Override
@@ -57,7 +43,7 @@ class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.ViewHolder> {
         holder.bookView.setTitle(books[position].getTitle());
         holder.bookView.setAuthor(books[position].getFormatedAuthorNames());
 
-        holder.bookView.setTag(books[position].getId());
+        holder.bookView.setBookId(books[position].getId());
 
         String path = books[position].getCover();
         if (path == null) {

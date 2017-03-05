@@ -15,4 +15,6 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="sync">Sync</string>
+    <string name="edit">Edit</string>
+    <string name="about">About</string>
 </resources>

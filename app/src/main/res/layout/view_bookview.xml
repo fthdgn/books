@@ -5,59 +5,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:background="@android:color/white">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:id="@+id/title_text_view"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:ellipsize="end"
         android:maxLines="2"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="5dp"
         android:textColor="@android:color/black"
         android:textSize="17sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintRight_toLeftOf="@+id/option_button"
+        app:layout_constraintTop_toBottomOf="@+id/cover_image_view"
         tools:text="War and Peace"/>
 
     <TextView
-        android:id="@+id/authorText"
-        android:layout_width="wrap_content"
+        android:id="@+id/author_text_view"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
+        android:ellipsize="end"
         android:maxLines="1"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
         android:textColor="@android:color/darker_gray"
         android:textSize="12sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView"
+        app:layout_constraintLeft_toLeftOf="@id/title_text_view"
+        app:layout_constraintRight_toRightOf="@id/option_button"
+        app:layout_constraintTop_toBottomOf="@id/title_text_view"
         tools:text="Tolstoy"/>
 
     <ImageView
-        android:id="@+id/imageView"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cover_image_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="70sp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginTop="0dp"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="65sp"
         android:adjustViewBounds="true"
-        android:contentDescription="@string/book_cover"
+        android:cropToPadding="false"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintDimensionRatio="h,5:8"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"
+        tools:ignore="ContentDescription"
         tools:src="@drawable/warandpeace"/>
+
+    <ImageButton
+        android:id="@+id/option_button"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:src="@drawable/ic_more_vert"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/title_text_view"
+        tools:ignore="ContentDescription,RtlSymmetry"/>
 </android.support.constraint.ConstraintLayout>
 
 

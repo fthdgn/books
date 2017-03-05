@@ -1,16 +1,22 @@
 package tr.name.fatihdogan.books;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.PopupMenu;
 import android.util.AttributeSet;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,13 +24,18 @@ import tr.name.fatihdogan.books.utils.LogUtils;
 
 import static tr.name.fatihdogan.books.utils.ImageUtils.calculateAverageColor;
 
-public class BookView extends CardView {
+public class BookView extends CardView implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
     private static final String TOOLS_NS = "http://schemas.android.com/tools/bookview";
-    public ImageView coverImageView;
+    private String bookId;
+    private ImageView coverImageView;
     private TextView titleTextView;
     private TextView authorTextView;
+    private ImageButton optionButton;
     private CoverLoader coverLoader;
+    private PopupMenu optionPopupMenu;
+    private MenuItem editMenuItem;
+    private MenuItem aboutMenuItem;
 
     public BookView(Context context) {
         super(context);
@@ -46,9 +57,18 @@ public class BookView extends CardView {
         ViewCompat.setElevation(this, 5);
         inflate(context, R.layout.view_bookview, this);
         setUseCompatPadding(true);
-        coverImageView = (ImageView) findViewById(R.id.imageView);
-        titleTextView = (TextView) findViewById(R.id.textView);
-        authorTextView = (TextView) findViewById(R.id.authorText);
+        coverImageView = (ImageView) findViewById(R.id.cover_image_view);
+        titleTextView = (TextView) findViewById(R.id.title_text_view);
+        authorTextView = (TextView) findViewById(R.id.author_text_view);
+        optionButton = (ImageButton) findViewById(R.id.option_button);
+        optionButton.setOnClickListener(this);
+        optionPopupMenu = new PopupMenu(context, optionButton);
+        editMenuItem = optionPopupMenu.getMenu().add(R.string.edit);
+        aboutMenuItem = optionPopupMenu.getMenu().add(R.string.about);
+        optionPopupMenu.setOnMenuItemClickListener(this);
+
+        setOnClickListener(this);
+
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BookView);
             setTitle(a.getText(R.styleable.BookView_title));
@@ -62,6 +82,10 @@ public class BookView extends CardView {
             setAuthor(attrs.getAttributeValue(TOOLS_NS, "author"));
             setCover(attrs.getAttributeResourceValue(TOOLS_NS, "cover", 0));
         }
+    }
+
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
     }
 
     public void setTitle(CharSequence charSequence) {
@@ -93,6 +117,31 @@ public class BookView extends CardView {
 
     public void setAuthor(CharSequence charSequence) {
         authorTextView.setText(charSequence);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.equals(optionButton)) {
+            optionPopupMenu.show();
+        } else if (v.equals(this)) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://play.google.com/books/reader?id=" + bookId));
+            getContext().startActivity(intent);
+        }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if (item == editMenuItem) {
+            LogUtils.logCodeLocation("editMenuItem");
+            return true;
+        } else if (item == aboutMenuItem) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://play.google.com/store/books/details?id=" + bookId));
+            getContext().startActivity(intent);
+            return true;
+        }
+        return false;
     }
 
     //endregion
