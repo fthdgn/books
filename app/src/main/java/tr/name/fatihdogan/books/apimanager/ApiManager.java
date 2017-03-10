@@ -1,11 +1,14 @@
 package tr.name.fatihdogan.books.apimanager;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -13,9 +16,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import tr.name.fatihdogan.books.BaseActivity;
-import tr.name.fatihdogan.books.callback.ResultCodeListener;
+import tr.name.fatihdogan.books.callback.ActivityResultListener;
 import tr.name.fatihdogan.books.callback.SimpleListener;
-import tr.name.fatihdogan.books.callback.TwoObjectListener;
 import tr.name.fatihdogan.books.data.Book;
 import tr.name.fatihdogan.googlebooksapi.BooksApi;
 import tr.name.fatihdogan.googlebooksapi.BooksApiManager;
@@ -25,6 +27,8 @@ import tr.name.fatihdogan.googlebooksapi.constants.ParameterConstants;
 import tr.name.fatihdogan.googlebooksapi.listener.Listener;
 import tr.name.fatihdogan.googlebooksapi.output.VolumeListOutput;
 import tr.name.fatihdogan.googlebooksapi.output.VolumeOutput;
+
+import static android.app.Activity.RESULT_OK;
 
 public class ApiManager {
 
@@ -42,12 +46,26 @@ public class ApiManager {
 
     public static void sync(final BaseActivity activity, final SimpleListener callback) {
         if (getInstance().getAccount(activity) == null) {
-            activity.pickAccount(new TwoObjectListener<BaseActivity, Account>() {
+            Log.i("ACCOUNT", "Account picking.");
+            String[] accountTypes = new String[]{"com.google"};
+            Intent intent;
 
+            if (Build.VERSION.SDK_INT < 23) {
+                //noinspection deprecation
+                intent = AccountManager.newChooseAccountIntent(null, null, accountTypes, false, null, null, null, null);
+            } else {
+                intent = AccountManager.newChooseAccountIntent(null, null, accountTypes, null, null, null, null);
+            }
+
+            activity.startActivityForResult(intent, new ActivityResultListener() {
                 @Override
-                public void onResponse(BaseActivity object, Account object2) {
-                    if (object2 != null) {
-                        getInstance().setAccount(object2, activity);
+                public void onActivityResult(int resultCode, Intent data) {
+                    if (resultCode == RESULT_OK) {
+                        Account account = new Account(
+                                data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME),
+                                data.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
+
+                        getInstance().setAccount(account, activity);
                         sync(activity, callback);
                     }
                 }
@@ -87,19 +105,22 @@ public class ApiManager {
                             GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
                             int code = googleApiAvailability.isGooglePlayServicesAvailable(activity);
                             if (code != ConnectionResult.SUCCESS) {
-                                activity.showGooglePlayServiceDialog(googleApiAvailability, code, new ResultCodeListener<BaseActivity>() {
+                                int requestCode = activity.addActivityResultListener(new ActivityResultListener() {
                                     @Override
-                                    public void onResponse(BaseActivity object, @Result int resultCode) {
-                                        if (resultCode == OK)
+                                    public void onActivityResult(int resultCode, Intent data) {
+                                        if (resultCode == RESULT_OK)
                                             sync(activity, callback);
                                     }
                                 });
+                                Dialog dialog = googleApiAvailability.getErrorDialog(activity, code, requestCode);
+                                dialog.show();
                             }
                         } else if (e instanceof UserRecoverableAuthException) {
                             Intent intent = ((UserRecoverableAuthException) e).getIntent();
-                            activity.showGooglePlayServicePermission(intent, new ResultCodeListener<BaseActivity>() {
-                                public void onResponse(BaseActivity object, @Result int resultCode) {
-                                    if (resultCode == OK)
+                            activity.startActivityForResult(intent, new ActivityResultListener() {
+                                @Override
+                                public void onActivityResult(int resultCode, Intent data) {
+                                    if (resultCode == RESULT_OK)
                                         sync(activity, callback);
                                 }
                             });
@@ -111,7 +132,6 @@ public class ApiManager {
             @Override
             public void onException(Exception e) {
                 e.printStackTrace();
-                Toast.makeText(activity, "Error", Toast.LENGTH_LONG).show();
             }
         });
         tokenRetriever.execute();

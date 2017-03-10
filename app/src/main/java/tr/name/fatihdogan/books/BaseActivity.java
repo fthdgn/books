@@ -1,99 +1,80 @@
 package tr.name.fatihdogan.books;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Intent;
-import android.os.Build;
 import android.support.annotation.CallSuper;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.util.SparseArray;
 
-import com.google.android.gms.common.GoogleApiAvailability;
-
-import tr.name.fatihdogan.books.callback.ResultCodeListener;
-import tr.name.fatihdogan.books.callback.TwoObjectListener;
+import tr.name.fatihdogan.books.callback.ActivityResultListener;
 
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
-    private static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
-    private static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
-    private static final int REQUEST_CODE_PERMISSION_FROM_PLAY_SERVICES_ERROR = 1002;
-
-    private static TwoObjectListener<BaseActivity, Account> accountPickerListener;
-    private static ResultCodeListener<BaseActivity> googlePlayServiceDialogListener;
-    private static ResultCodeListener<BaseActivity> googlePlayServicePermissionListener;
+    private final SparseArray<ActivityResultListener> activityResultListeners = new SparseArray<>();
+    private int listeners_last_index = -1;
 
     @Override
     @CallSuper
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_CODE_PICK_ACCOUNT && accountPickerListener != null) {
-            if (resultCode == RESULT_OK) {
-                accountPickerListener.onResponse(this, new Account(
-                        data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME),
-                        data.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE)));
-            } else if (resultCode == RESULT_CANCELED) {
-                accountPickerListener.onResponse(this, null);
-            }
-            accountPickerListener = null;
-        } else if (requestCode == REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR && googlePlayServiceDialogListener != null) {
-            if (resultCode == RESULT_OK)
-                googlePlayServiceDialogListener.onResponse(this, ResultCodeListener.OK);
-            else
-                googlePlayServiceDialogListener.onResponse(this, ResultCodeListener.CANCEL);
-            googlePlayServiceDialogListener = null;
-        } else if (requestCode == REQUEST_CODE_PERMISSION_FROM_PLAY_SERVICES_ERROR && googlePlayServicePermissionListener != null) {
-            if (resultCode == RESULT_OK)
-                googlePlayServicePermissionListener.onResponse(this, ResultCodeListener.OK);
-            else
-                googlePlayServicePermissionListener.onResponse(this, ResultCodeListener.CANCEL);
-            googlePlayServiceDialogListener = null;
-        }
+        ActivityResultListener listener = getActivityResultListener(requestCode);
+        if (listener != null)
+            listener.onActivityResult(resultCode, data);
+        removeActivityResultListener(requestCode);
     }
 
-    //region Google Play Services login
-    public void showGooglePlayServicePermission(Intent intent, ResultCodeListener<BaseActivity> listener) {
-        if (googlePlayServicePermissionListener != null) {
-            return;
-        }
-
-        googlePlayServicePermissionListener = listener;
-
-        startActivityForResult(intent, REQUEST_CODE_PERMISSION_FROM_PLAY_SERVICES_ERROR);
+    /**
+     * Starts an activity intent for result.
+     * When result received the listener will be called.
+     *
+     * @param intent   Intent which will be started
+     * @param listener The listener which will be called when result is received
+     */
+    public void startActivityForResult(@NonNull Intent intent, @NonNull ActivityResultListener listener) {
+        startActivityForResult(intent, addActivityResultListener(listener));
     }
 
-    public void showGooglePlayServiceDialog(GoogleApiAvailability googleApiAvailability, int result, ResultCodeListener<BaseActivity> listener) {
-        if (googlePlayServiceDialogListener != null) {
-            return;
-        }
-        googlePlayServiceDialogListener = listener;
+    /**
+     * Add a activity result listener and returns request code.
+     * Use {@link BaseActivity#startActivityForResult(Intent, ActivityResultListener)} if possible.
+     * If it is not possible use returned request code to start intent.
+     * @param listener Listener which will be called
+     * @return Request code
+     */
+    public int addActivityResultListener(@NonNull ActivityResultListener listener) {
+        /*
+         * Small possibility.
+         * Probably there are a few listeners never removed.
+         * They will be overwritten.
+         */
+        if (listeners_last_index == 0xffff)
+            listeners_last_index = -1;
 
-        Dialog dialog = googleApiAvailability.getErrorDialog(this, result, REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
-        dialog.show();
+        activityResultListeners.put(++listeners_last_index, listener);
+        return listeners_last_index;
     }
 
-    public void pickAccount(TwoObjectListener<BaseActivity, Account> listener) {
-        if (accountPickerListener != null) {
-            return;
-        }
-
-        accountPickerListener = listener;
-
-        Log.i("ACCOUNT", "Account picking.");
-        String[] accountTypes = new String[]{"com.google"};
-        Intent intent;
-
-        if (Build.VERSION.SDK_INT < 23) {
-            //noinspection deprecation
-            intent = AccountManager.newChooseAccountIntent(null, null, accountTypes, false, null, null, null, null);
-        } else {
-            intent = AccountManager.newChooseAccountIntent(null, null, accountTypes, null, null, null, null);
-        }
-        startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
+    /**
+     * Result listener for given request code.
+     * @param requestCode Request code (form 0 to 65535 (0xffff))
+     * @return Result listener
+     */
+    private ActivityResultListener getActivityResultListener(@IntRange(from = 0, to = 0xffff) int requestCode) {
+        return activityResultListeners.get(requestCode);
     }
-    //endregion
+
+    /**
+     * Removes result listener for given request code
+     * @param requestCode Request code (form 0 to 65535 (0xffff))
+     */
+    private void removeActivityResultListener(@IntRange(from = 0, to = 0xffff) int requestCode) {
+        activityResultListeners.remove(requestCode);
+        if (activityResultListeners.size() == 0)
+            listeners_last_index = -1;
+    }
+
 }
