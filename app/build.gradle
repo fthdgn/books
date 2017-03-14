@@ -26,14 +26,18 @@ android {
 }
 
 dependencies {
+    compile project(':google-books-api')
     compile 'com.google.android.gms:play-services-auth:10.2.0'
-    compile 'com.android.support:appcompat-v7:25.2.0'
-    compile 'com.android.support:cardview-v7:25.2.0'
-    compile 'com.android.support:recyclerview-v7:25.2.0'
+    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:design:25.3.0'
+    compile 'com.android.support:cardview-v7:25.3.0'
+    compile 'com.android.support:recyclerview-v7:25.3.0'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.android.volley:volley:1.0.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.1'
-    compile project(':google-books-api')
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile('com.github.ittianyu:BottomNavigationViewEx:1.1.4') {
+        exclude group: 'com.android.support'
+    }
 }
 
 /**
@@ -45,12 +49,4 @@ if (file('signingDebug.gradle').exists()) {
 }
 if (file('signingRelease.gradle').exists()) {
     apply from: 'signingRelease.gradle'
-}
-
-allprojects {
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-        }
-    }
 }

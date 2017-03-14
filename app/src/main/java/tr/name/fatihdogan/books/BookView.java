@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import tr.name.fatihdogan.books.data.Book;
 import tr.name.fatihdogan.books.utils.LogUtils;
 
 import static tr.name.fatihdogan.books.utils.ImageUtils.calculateAverageColor;
@@ -27,7 +28,7 @@ import static tr.name.fatihdogan.books.utils.ImageUtils.calculateAverageColor;
 public class BookView extends CardView implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
     private static final String TOOLS_NS = "http://schemas.android.com/tools/bookview";
-    private String bookId;
+    private Book book;
     private ImageView coverImageView;
     private TextView titleTextView;
     private TextView authorTextView;
@@ -84,8 +85,11 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
         }
     }
 
-    public void setBookId(String bookId) {
-        this.bookId = bookId;
+    public void setBook(Book book) {
+        this.book = book;
+        setTitle(book.getTitle());
+        setAuthor(book.getFormatedAuthorNames());
+        setCover(book.getCover());
     }
 
     public void setTitle(CharSequence charSequence) {
@@ -125,7 +129,7 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
             optionPopupMenu.show();
         } else if (v.equals(this)) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://play.google.com/books/reader?id=" + bookId));
+            intent.setData(Uri.parse("https://play.google.com/books/reader?id=" + book.getId()));
             getContext().startActivity(intent);
         }
     }
@@ -137,7 +141,7 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
             return true;
         } else if (item == aboutMenuItem) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://play.google.com/store/books/details?id=" + bookId));
+            intent.setData(Uri.parse("https://play.google.com/store/books/details?id=" + book.getId()));
             getContext().startActivity(intent);
             return true;
         }

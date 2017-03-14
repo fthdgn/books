@@ -1,0 +1,39 @@
+<!--books by Russell Shaw from the Noun Project
+https://thenounproject.com/term/shelf/152478/-->
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportHeight="125.0"
+    android:viewportWidth="100.0">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M5,26.37h25.67v18.08h-25.67z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M5,47.94h25.67v26.82h-25.67z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M5,78.24h25.67v2h-25.67z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M5,83.73h25.67v4.83h-25.67z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M36.94,11.44v63.31H62.61V11.44H36.94zM59.61,37.73H39.54V17.66h20.07V37.73z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M36.94,78.24h25.67v2h-25.67z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M36.94,83.73h25.67v4.83h-25.67z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M69.33,17.66h25.67v18.33h-25.67z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M69.33,39.47v37.03H95V39.47H69.33zM92.21,50H72.12V44.45h20.09V50z"/>
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M69.33,79.99h25.67v8.57h-25.67z"/>
+</vector>

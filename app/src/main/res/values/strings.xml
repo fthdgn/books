@@ -17,4 +17,7 @@
     <string name="sync">Sync</string>
     <string name="edit">Edit</string>
     <string name="about">About</string>
+    <string name="all">All</string>
+    <string name="title_authors">Authors</string>
+    <string name="title_bookshelves">Bookshelves</string>
 </resources>

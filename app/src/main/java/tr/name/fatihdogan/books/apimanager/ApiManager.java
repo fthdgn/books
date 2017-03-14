@@ -15,6 +15,8 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import java.io.File;
+
 import tr.name.fatihdogan.books.BaseActivity;
 import tr.name.fatihdogan.books.callback.ActivityResultListener;
 import tr.name.fatihdogan.books.callback.SimpleListener;
@@ -86,9 +88,24 @@ public class ApiManager {
                                 if (e instanceof NotInitializedException) {
                                     BooksApiManager.initialize(activity);
                                 }
+                                String authToken = BooksApiManager.getInstance().getAuthToken();
+                                String coverPath = activity.getFilesDir().getPath() + File.separator + "online" + File.separator + "cover" + File
+                                        .separator;
 
-                                for (VolumeOutput volumeOutput : response != null ? response.items : new VolumeOutput[0]) {
-                                    Book.createBook(volumeOutput);
+                                for (final VolumeOutput volumeOutput : response != null ? response.items : new VolumeOutput[0]) {
+                                    String url = "https://books.google.com/books/content?id=" + volumeOutput.id +
+                                            "&printsec=frontcover&img=1&zoom=1&source=gbs_api&w=320&access_token=" + authToken;
+
+                                    FileDownloadRequest fileDownloadRequest = new FileDownloadRequest(
+                                            url,
+                                            coverPath + volumeOutput.id,
+                                            new SimpleListener() {
+                                                @Override
+                                                public void onResponse() {
+                                                    Book.createBook(volumeOutput);
+                                                }
+                                            });
+                                    FileDownloadRequest.addRequest(fileDownloadRequest);
                                 }
                                 callback.onResponse();
                             }

@@ -1,6 +1,8 @@
 package tr.name.fatihdogan.books.data;
 
+import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;
 
@@ -8,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+import tr.name.fatihdogan.books.BaseApplication;
 import tr.name.fatihdogan.googlebooksapi.output.VolumeOutput;
 
 import static tr.name.fatihdogan.books.BaseApplication.getFilesDirPath;
@@ -24,6 +27,7 @@ public class Book {
         deleteDirectory(onlineBookPath);
         deleteDirectory(localCoverPath);
         deleteDirectory(onlineCoverPath);
+        notifyChange();
     }
 
     private static class BookData {
@@ -119,6 +123,7 @@ public class Book {
             return;
         saveStringToFileSafely(new File(localBookPath, id), new Gson().toJson(this.localData));
         localDataDirty = false;
+        notifyChange();
     }
 
     public static void loadBooks() {
@@ -140,6 +145,7 @@ public class Book {
             }
             BOOKS.put(id, book);
         }
+        notifyChange();
     }
 
     public static void createBook(VolumeOutput volumeOutput) {
@@ -154,6 +160,14 @@ public class Book {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        notifyChange();
+    }
+
+    public static final String BOOKS_CHANGED_EVENT = "BOOKS_CHANGED_EVENT";
+
+    private static void notifyChange() {
+        Intent intent = new Intent(BOOKS_CHANGED_EVENT);
+        LocalBroadcastManager.getInstance(BaseApplication.getInstance()).sendBroadcast(intent);
     }
 
 }
