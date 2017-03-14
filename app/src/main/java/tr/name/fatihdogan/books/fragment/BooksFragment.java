@@ -58,7 +58,7 @@ public class BooksFragment extends Fragment {
     private final Comparator<Book> titleComparator = new Comparator<Book>() {
         @Override
         public int compare(Book o1, Book o2) {
-            return o1.getTitle().compareTo(o2.getTitle());
+            return o1.getSortTitle().compareTo(o2.getSortTitle());
         }
     };
 

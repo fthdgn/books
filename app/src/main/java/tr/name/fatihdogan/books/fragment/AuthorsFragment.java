@@ -74,7 +74,9 @@ public class AuthorsFragment extends Fragment {
         SortedSet<String> authorsSet = new TreeSet<>();
         Collection<Book> all_books = Book.BOOKS.values();
         for (Book b : all_books) {
-            Collections.addAll(authorsSet, b.getAuthors());
+            String[] authors = b.getAuthors();
+            if (authors != null)
+                Collections.addAll(authorsSet, authors);
         }
         authors.clear();
         authors.addAll(authorsSet);

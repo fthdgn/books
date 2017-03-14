@@ -20,4 +20,9 @@
     <string name="all">All</string>
     <string name="title_authors">Authors</string>
     <string name="title_bookshelves">Bookshelves</string>
+    <string name="save">Save</string>
+    <string name="activity_start_error">Book cannot be found. Activity will be finished.</string>
+    <string name="title">Title</string>
+    <string name="sort_title">Sort Title</string>
+    <string name="authors">Authors</string>
 </resources>

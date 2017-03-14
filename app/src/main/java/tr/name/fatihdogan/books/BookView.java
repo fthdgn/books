@@ -88,7 +88,7 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
     public void setBook(Book book) {
         this.book = book;
         setTitle(book.getTitle());
-        setAuthor(book.getFormatedAuthorNames());
+        setAuthor(book.getFormattedAuthors());
         setCover(book.getCover());
     }
 
@@ -131,13 +131,16 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://play.google.com/books/reader?id=" + book.getId()));
             getContext().startActivity(intent);
+            book.updateLastUsageDate();
         }
     }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (item == editMenuItem) {
-            LogUtils.logCodeLocation("editMenuItem");
+            Intent intent = new Intent(getContext(),BookEditActivity.class);
+            intent.putExtra("BOOK_ID", book.getId());
+            getContext().startActivity(intent);
             return true;
         } else if (item == aboutMenuItem) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
