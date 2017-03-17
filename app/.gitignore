@@ -2,3 +2,4 @@
 build/
 signingRelease.gradle
 signingDebug.gradle
+google-services.json
