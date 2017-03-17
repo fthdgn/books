@@ -5,11 +5,22 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.ColorInt;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class ImageUtils {
 
-    public static Bitmap createImage(int width, int height, int color) {
+    /**
+     * Creates a solid color bitmap
+     *
+     * @param width  Width of bitmap
+     * @param height Height of bitmap
+     * @param color  Color of bitmap
+     * @return Solid color bitmap
+     */
+    @NonNull
+    public static Bitmap createImage(@IntRange(from = 1) int width, @IntRange(from = 1) int height, @ColorInt int color) {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
@@ -18,8 +29,17 @@ public class ImageUtils {
         return bitmap;
     }
 
+    /**
+     * Calculates a average color from given bitmap
+     * Less pixel scaling means more accurate average,
+     * but it increases calculation time
+     *
+     * @param bitmap       Bitmap
+     * @param pixelSpacing Pixel spacing, higher values are more accurate but slower
+     * @return Average color as ColorInt
+     */
     @ColorInt
-    public static int calculateAverageColor(android.graphics.Bitmap bitmap, int pixelSpacing) {
+    public static int calculateAverageColor(@NonNull Bitmap bitmap, @IntRange(from = 1) int pixelSpacing) {
         int R = 0;
         int G = 0;
         int B = 0;

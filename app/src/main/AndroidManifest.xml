@@ -8,18 +8,18 @@
     <application
         android:name=".BaseApplication"
         android:allowBackup="false"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name="tr.name.fatihdogan.books.MainActivity"
+            android:name="tr.name.fatihdogan.books.activity.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".BookEditActivity"/>
+        <activity android:name=".activity.BookEditActivity"/>
     </application>
 </manifest>

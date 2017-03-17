@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BookEditActivity"
     android:animateLayoutChanges="true"
+    tools:context=".activity.BookEditActivity"
     tools:ignore="ContentDescription">
 
     <android.support.constraint.ConstraintLayout
@@ -15,8 +15,6 @@
 
         <ImageView
             android:id="@+id/cover_image_view"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:layout_width="0dp"
             android:layout_height="250dp"
             android:layout_marginBottom="@dimen/book_edit_fields_margin"
@@ -24,11 +22,13 @@
             android:layout_marginLeft="@dimen/book_edit_fields_margin"
             android:layout_marginRight="@dimen/book_edit_fields_margin"
             android:layout_marginStart="@dimen/book_edit_fields_margin"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             app:layout_constraintBottom_toTopOf="@+id/include_edit_fields"
             app:layout_constraintDimensionRatio="w,5:8"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            tools:src="@drawable/warandpeace"/>
+            tools:src="@android:color/darker_gray"/>
 
         <ImageButton
             android:id="@+id/change_cover_button"

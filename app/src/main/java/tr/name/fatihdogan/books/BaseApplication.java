@@ -8,7 +8,6 @@ import tr.name.fatihdogan.googlebooksapi.BooksApiManager;
 
 public class BaseApplication extends Application {
 
-    private static String FILES_DIR_PATH;
     private static BaseApplication mInstance;
 
     @Override
@@ -17,7 +16,6 @@ public class BaseApplication extends Application {
         mInstance = this;
         BooksApiManager.initialize(this);
         BooksApiManager.getInstance().setDebugEnabled(BuildConfig.DEBUG);
-        FILES_DIR_PATH = getFilesDir().getAbsolutePath();
 
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -32,7 +30,4 @@ public class BaseApplication extends Application {
         return mInstance;
     }
 
-    public static String getFilesDirPath() {
-        return FILES_DIR_PATH;
-    }
 }

@@ -1,4 +1,4 @@
-package tr.name.fatihdogan.books;
+package tr.name.fatihdogan.books.activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -16,23 +16,26 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 
+import tr.name.fatihdogan.books.R;
 import tr.name.fatihdogan.books.data.Book;
 import tr.name.fatihdogan.books.utils.EditTextUtils;
 
 public class BookEditActivity extends BaseActivity implements View.OnClickListener {
 
-    String bookId;
-    Book book;
-    ImageView coverImageView;
-    ImageButton changeCoverButton;
+    @SuppressWarnings("FieldCanBeLocal")
+    private String bookId;
+    private Book book;
+    @SuppressWarnings("FieldCanBeLocal")
+    private ImageView coverImageView;
+    private ImageButton changeCoverButton;
 
-    EditText titleEditText;
-    EditText sortTitleEditText;
-    EditText authorsEditText;
+    private EditText titleEditText;
+    private EditText sortTitleEditText;
+    private EditText authorsEditText;
 
-    CheckBox titleCheckBox;
-    CheckBox sortTitleCheckBox;
-    CheckBox authorsCheckBox;
+    private CheckBox titleCheckBox;
+    private CheckBox sortTitleCheckBox;
+    private CheckBox authorsCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

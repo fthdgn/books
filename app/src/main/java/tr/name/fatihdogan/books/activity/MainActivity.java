@@ -1,4 +1,4 @@
-package tr.name.fatihdogan.books;
+package tr.name.fatihdogan.books.activity;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -12,16 +12,16 @@ import android.view.MenuItem;
 
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
+import tr.name.fatihdogan.books.R;
 import tr.name.fatihdogan.books.apimanager.ApiManager;
 import tr.name.fatihdogan.books.callback.SimpleListener;
 import tr.name.fatihdogan.books.data.Book;
 import tr.name.fatihdogan.books.fragment.AuthorsFragment;
 import tr.name.fatihdogan.books.fragment.BooksFragment;
-import tr.name.fatihdogan.books.utils.LogUtils;
 
 public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-    FragmentManager fragmentManager;
+    private FragmentManager fragmentManager;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,8 +73,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     }
 
     //region Fragments
-    Fragment allBooksFragment;
-    Fragment authorsFragment;
+    private Fragment allBooksFragment;
+    private Fragment authorsFragment;
 
     private void showAllBooksFragment() {
         showMainFragment(allBooksFragment);
@@ -99,7 +99,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     //region OptionsMenu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        LogUtils.logCodeLocation("Main Activity onCreateOptionsMenu Start");
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         MenuItem login = menu.findItem(R.id.login_button);
@@ -111,7 +110,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         sync.setVisible(loggedin);
         logout.setVisible(loggedin);
 
-        LogUtils.logCodeLocation("Main Activity onCreateOptionsMenu End");
         return true;
     }
 

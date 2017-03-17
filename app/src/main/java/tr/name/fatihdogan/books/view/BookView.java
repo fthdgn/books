@@ -1,4 +1,4 @@
-package tr.name.fatihdogan.books;
+package tr.name.fatihdogan.books.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,10 +20,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import tr.name.fatihdogan.books.R;
+import tr.name.fatihdogan.books.activity.BookEditActivity;
 import tr.name.fatihdogan.books.data.Book;
-import tr.name.fatihdogan.books.utils.LogUtils;
-
-import static tr.name.fatihdogan.books.utils.ImageUtils.calculateAverageColor;
+import tr.name.fatihdogan.books.utils.ImageUtils;
 
 public class BookView extends CardView implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
@@ -92,11 +92,11 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
         setCover(book.getCover());
     }
 
-    public void setTitle(CharSequence charSequence) {
+    private void setTitle(CharSequence charSequence) {
         titleTextView.setText(charSequence);
     }
 
-    public void setCover(@DrawableRes int resId) {
+    private void setCover(@DrawableRes int resId) {
         coverImageView.setBackgroundResource(android.R.color.transparent);
         cancelCoverLoad();
         coverLoader = new CoverLoader(resId, getResources());
@@ -106,7 +106,7 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
         }
     }
 
-    public void setCover(String filePath) {
+    private void setCover(String filePath) {
         setCover(android.R.color.transparent);
         coverImageView.setBackgroundResource(android.R.color.transparent);
         cancelCoverLoad();
@@ -119,7 +119,7 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
             coverLoader.cancel(false);
     }
 
-    public void setAuthor(CharSequence charSequence) {
+    private void setAuthor(CharSequence charSequence) {
         authorTextView.setText(charSequence);
     }
 
@@ -138,7 +138,7 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (item == editMenuItem) {
-            Intent intent = new Intent(getContext(),BookEditActivity.class);
+            Intent intent = new Intent(getContext(), BookEditActivity.class);
             intent.putExtra("BOOK_ID", book.getId());
             getContext().startActivity(intent);
             return true;
@@ -158,13 +158,13 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
         static final int RESOURCE = 1;
         static final int PATH = 2;
 
-        int mode;
+        final int mode;
         @DrawableRes
         int resourceId;
         Bitmap bitmap;
         String path;
 
-        Resources resources;
+        final Resources resources;
         @ColorInt
         int color;
 
@@ -194,7 +194,7 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
             if (bitmap == null)
                 return null;
 
-            color = calculateAverageColor(bitmap, bitmap.getHeight() * bitmap.getHeight() / 20);
+            color = ImageUtils.calculateAverageColor(bitmap, bitmap.getHeight() * bitmap.getHeight() / 20);
 
             return bitmap;
         }
@@ -202,7 +202,6 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             if (isCancelled()) {
-                LogUtils.logCodeLocation("canceled");
                 return;
             }
             coverImageView.setImageBitmap(bitmap);

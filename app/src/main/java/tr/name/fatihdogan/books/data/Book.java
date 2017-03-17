@@ -14,22 +14,18 @@ import java.util.Date;
 import java.util.HashMap;
 
 import tr.name.fatihdogan.books.BaseApplication;
+import tr.name.fatihdogan.books.Constants;
+import tr.name.fatihdogan.books.utils.FileUtils;
 import tr.name.fatihdogan.googlebooksapi.output.VolumeOutput;
-
-import static tr.name.fatihdogan.books.BaseApplication.getFilesDirPath;
-import static tr.name.fatihdogan.books.utils.FileUtils.deleteDirectory;
-import static tr.name.fatihdogan.books.utils.FileUtils.readStringFromFileSafely;
-import static tr.name.fatihdogan.books.utils.FileUtils.saveStringToFile;
-import static tr.name.fatihdogan.books.utils.FileUtils.saveStringToFileSafely;
 
 public class Book {
 
     public static void clear() {
         BOOKS.clear();
-        deleteDirectory(localBookPath);
-        deleteDirectory(onlineBookPath);
-        deleteDirectory(localCoverPath);
-        deleteDirectory(onlineCoverPath);
+        FileUtils.deleteDirectory(Constants.localBookPath);
+        FileUtils.deleteDirectory(Constants.onlineBookPath);
+        FileUtils.deleteDirectory(Constants.localCoverPath);
+        FileUtils.deleteDirectory(Constants.onlineCoverPath);
         notifyChange();
     }
 
@@ -45,15 +41,10 @@ public class Book {
         Date lastUsage;
     }
 
-    private static final String localBookPath = getFilesDirPath() + File.separator + "local" + File.separator + "book";
-    private static final String onlineBookPath = getFilesDirPath() + File.separator + "online" + File.separator + "book";
-    private static final String localCoverPath = getFilesDirPath() + File.separator + "local" + File.separator + "cover";
-    private static final String onlineCoverPath = getFilesDirPath() + File.separator + "online" + File.separator + "cover";
-
-    public static HashMap<String, Book> BOOKS = new HashMap<>();
+    public static final HashMap<String, Book> BOOKS = new HashMap<>();
 
     @NonNull
-    private String id;
+    private final String id;
     @Nullable
     private BookData localData;
     @NonNull
@@ -219,11 +210,11 @@ public class Book {
 
     @Nullable
     public String getCover() {
-        File localCover = new File(localCoverPath, id);
+        File localCover = new File(Constants.localCoverPath, id);
         if (localCover.exists()) {
             return localCover.getAbsolutePath();
         } else {
-            File onlineCover = new File(onlineCoverPath, id);
+            File onlineCover = new File(Constants.onlineCoverPath, id);
             if (onlineCover.exists()) {
                 return onlineCover.getAbsolutePath();
             }
@@ -266,7 +257,7 @@ public class Book {
     public void save() {
         if (!localDataDirty)
             return;
-        saveStringToFileSafely(new File(localBookPath, id), new Gson().toJson(this.localData));
+        FileUtils.writeSilently(new File(Constants.localBookPath, id), new Gson().toJson(this.localData));
         localDataDirty = false;
         notifyChange();
     }
@@ -274,13 +265,13 @@ public class Book {
     public static void loadBooks() {
         Gson gson = new Gson();
         BOOKS.clear();
-        File[] onlineBooks = new File(onlineBookPath).listFiles();
+        File[] onlineBooks = new File(Constants.onlineBookPath).listFiles();
         if (onlineBooks == null)
             return;
         for (File onlineBook : onlineBooks) {
             String id = onlineBook.getName();
-            String online = readStringFromFileSafely(onlineBook);
-            String local = readStringFromFileSafely(new File(localBookPath, id));
+            String online = FileUtils.readStringSilently(onlineBook);
+            String local = FileUtils.readStringSilently(new File(Constants.localBookPath, id));
 
             Book book = new Book(id);
             book.onlineData = gson.fromJson(online, BookData.class);
@@ -299,7 +290,7 @@ public class Book {
         if (volumeOutput.userInfo != null && volumeOutput.userInfo.readingPosition != null)
             book.onlineData.lastUsage = volumeOutput.userInfo.readingPosition.updated;
         try {
-            saveStringToFile(new File(onlineBookPath, book.id), new Gson().toJson(book.onlineData));
+            FileUtils.write(new File(Constants.onlineBookPath, book.id), new Gson().toJson(book.onlineData));
             BOOKS.put(book.id, book);
         } catch (IOException e) {
             e.printStackTrace();

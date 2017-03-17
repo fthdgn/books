@@ -1,4 +1,4 @@
-package tr.name.fatihdogan.books;
+package tr.name.fatihdogan.books.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -42,6 +42,7 @@ public class BaseActivity extends AppCompatActivity {
      * Add a activity result listener and returns request code.
      * Use {@link BaseActivity#startActivityForResult(Intent, ActivityResultListener)} if possible.
      * If it is not possible use returned request code to start intent.
+     *
      * @param listener Listener which will be called
      * @return Request code
      */
@@ -60,6 +61,7 @@ public class BaseActivity extends AppCompatActivity {
 
     /**
      * Result listener for given request code.
+     *
      * @param requestCode Request code (form 0 to 65535 (0xffff))
      * @return Result listener
      */
@@ -69,6 +71,7 @@ public class BaseActivity extends AppCompatActivity {
 
     /**
      * Removes result listener for given request code
+     *
      * @param requestCode Request code (form 0 to 65535 (0xffff))
      */
     private void removeActivityResultListener(@IntRange(from = 0, to = 0xffff) int requestCode) {

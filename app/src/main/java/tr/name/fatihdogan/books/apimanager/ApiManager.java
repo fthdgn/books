@@ -17,7 +17,8 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.io.File;
 
-import tr.name.fatihdogan.books.BaseActivity;
+import tr.name.fatihdogan.books.Constants;
+import tr.name.fatihdogan.books.activity.BaseActivity;
 import tr.name.fatihdogan.books.callback.ActivityResultListener;
 import tr.name.fatihdogan.books.callback.SimpleListener;
 import tr.name.fatihdogan.books.data.Book;
@@ -29,8 +30,6 @@ import tr.name.fatihdogan.googlebooksapi.constants.ParameterConstants;
 import tr.name.fatihdogan.googlebooksapi.listener.Listener;
 import tr.name.fatihdogan.googlebooksapi.output.VolumeListOutput;
 import tr.name.fatihdogan.googlebooksapi.output.VolumeOutput;
-
-import static android.app.Activity.RESULT_OK;
 
 public class ApiManager {
 
@@ -62,7 +61,7 @@ public class ApiManager {
             activity.startActivityForResult(intent, new ActivityResultListener() {
                 @Override
                 public void onActivityResult(int resultCode, Intent data) {
-                    if (resultCode == RESULT_OK) {
+                    if (resultCode == Activity.RESULT_OK) {
                         Account account = new Account(
                                 data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME),
                                 data.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
@@ -89,8 +88,6 @@ public class ApiManager {
                                     BooksApiManager.initialize(activity);
                                 }
                                 String authToken = BooksApiManager.getInstance().getAuthToken();
-                                String coverPath = activity.getFilesDir().getPath() + File.separator + "online" + File.separator + "cover" + File
-                                        .separator;
 
                                 for (final VolumeOutput volumeOutput : response != null ? response.items : new VolumeOutput[0]) {
                                     String url = "https://books.google.com/books/content?id=" + volumeOutput.id +
@@ -98,7 +95,7 @@ public class ApiManager {
 
                                     FileDownloadRequest fileDownloadRequest = new FileDownloadRequest(
                                             url,
-                                            coverPath + volumeOutput.id,
+                                            Constants.localCoverPath + File.separator + volumeOutput.id,
                                             new SimpleListener() {
                                                 @Override
                                                 public void onResponse() {
@@ -125,7 +122,7 @@ public class ApiManager {
                                 int requestCode = activity.addActivityResultListener(new ActivityResultListener() {
                                     @Override
                                     public void onActivityResult(int resultCode, Intent data) {
-                                        if (resultCode == RESULT_OK)
+                                        if (resultCode == Activity.RESULT_OK)
                                             sync(activity, callback);
                                     }
                                 });
@@ -137,7 +134,7 @@ public class ApiManager {
                             activity.startActivityForResult(intent, new ActivityResultListener() {
                                 @Override
                                 public void onActivityResult(int resultCode, Intent data) {
-                                    if (resultCode == RESULT_OK)
+                                    if (resultCode == Activity.RESULT_OK)
                                         sync(activity, callback);
                                 }
                             });

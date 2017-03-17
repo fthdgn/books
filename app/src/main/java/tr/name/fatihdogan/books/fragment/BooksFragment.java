@@ -1,6 +1,5 @@
 package tr.name.fatihdogan.books.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,18 +17,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
 import tr.name.fatihdogan.books.BaseApplication;
-import tr.name.fatihdogan.books.BookView;
 import tr.name.fatihdogan.books.R;
 import tr.name.fatihdogan.books.data.Book;
-import tr.name.fatihdogan.books.utils.StringUtils;
-
-import static java.lang.annotation.RetentionPolicy.SOURCE;
+import tr.name.fatihdogan.books.utils.ArrayUtils;
+import tr.name.fatihdogan.books.view.BookView;
 
 public class BooksFragment extends Fragment {
 
@@ -38,7 +36,7 @@ public class BooksFragment extends Fragment {
     private static final int AUTHORS = 2;
     private static final int BOOKSHELF = 3;
 
-    @Retention(SOURCE)
+    @Retention(RetentionPolicy.SOURCE)
     @IntDef({
             NONE,
             ALL,
@@ -87,7 +85,6 @@ public class BooksFragment extends Fragment {
         return fragment;
     }
 
-    @SuppressLint("ResourceType")
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +97,7 @@ public class BooksFragment extends Fragment {
         }
 
         recyclerView = new RecyclerView(getActivity());
+        //noinspection ResourceType
         recyclerView.setId(10);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), getActivity().getResources().getInteger(R.integer.column)));
         booksAdapter = new BooksAdapter();
@@ -140,7 +138,7 @@ public class BooksFragment extends Fragment {
             case ALL:
                 return true;
             case AUTHORS:
-                return (StringUtils.contains(filterTerm, book.getAuthors()));
+                return (ArrayUtils.contains(book.getAuthors(), filterTerm));
             case BOOKSHELF:
                 //TODO Implement
                 return false;
