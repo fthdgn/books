@@ -1,5 +1,6 @@
 package tr.name.fatihdogan.books.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,6 +24,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import tr.name.fatihdogan.books.BaseApplication;
+import tr.name.fatihdogan.books.MainActivity;
 import tr.name.fatihdogan.books.data.Book;
 
 public class AuthorsFragment extends Fragment {
@@ -45,10 +47,13 @@ public class AuthorsFragment extends Fragment {
         return fragment;
     }
 
+    @SuppressLint("ResourceType")
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         recyclerView = new RecyclerView(getActivity());
+        recyclerView.setId(10);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         authorsAdapter = new AuthorsAdapter();
         recyclerView.setAdapter(authorsAdapter);
@@ -94,12 +99,25 @@ public class AuthorsFragment extends Fragment {
         }
     }
 
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v instanceof  TextView) {
+                Intent intent = new Intent(v.getContext(), MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.putExtra("AUTHOR", ((TextView) v).getText());
+                v.getContext().startActivity(intent);
+            }
+        }
+    };
+
     private class AuthorsAdapter extends RecyclerView.Adapter<AuthorsViewHolder> {
 
         @Override
         public AuthorsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             TextView textView = new TextView(parent.getContext());
             textView.setTextSize(20);
+            textView.setOnClickListener(onClickListener);
             return new AuthorsViewHolder(textView);
         }
 

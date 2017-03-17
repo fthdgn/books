@@ -3,6 +3,7 @@ package tr.name.fatihdogan.books;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -35,7 +36,31 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         navigation.setOnNavigationItemSelectedListener(this);
         //endregion
 
-        showAllBooksFragment();
+        if (savedInstanceState == null) {
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            authorsFragment = AuthorsFragment.newInstance();
+            allBooksFragment = BooksFragment.allBooksInstance();
+            transaction.add(R.id.container, authorsFragment, "authorsFragment");
+            transaction.add(R.id.container, allBooksFragment, "allBooksFragment");
+            transaction.show(allBooksFragment);
+            transaction.hide(authorsFragment);
+            transaction.commit();
+        } else {
+            authorsFragment = fragmentManager.findFragmentByTag("authorsFragment");
+            allBooksFragment = fragmentManager.findFragmentByTag("allBooksFragment");
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String s = intent.getStringExtra("AUTHOR");
+        if (s != null) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.container, BooksFragment.authorBooksInstance(s));
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
     }
 
     @Override
@@ -48,45 +73,26 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     }
 
     //region Fragments
-    BooksFragment allBooksFragment;
-    AuthorsFragment authorsFragment;
+    Fragment allBooksFragment;
+    Fragment authorsFragment;
 
     private void showAllBooksFragment() {
-        if (allBooksFragment == null) {
-            allBooksFragment = BooksFragment.allBooksInstance();
-            showFragment(allBooksFragment, false);
-        } else {
-            showFragment(allBooksFragment, true);
-        }
+        showMainFragment(allBooksFragment);
     }
 
     private void showAuthorsFragment() {
-        if (authorsFragment == null) {
-            authorsFragment = AuthorsFragment.newInstance();
-            showFragment(authorsFragment, false);
-        } else {
-            showFragment(authorsFragment, true);
-        }
+        showMainFragment(authorsFragment);
     }
 
-    private void showFragment(Fragment fragment, boolean attach) {
-        Fragment old = fragmentManager.findFragmentById(R.id.container);
-        if (old == fragment)
-            return;
-
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        if (old != null)
-            fragmentTransaction.detach(old);
-
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-
-        if (attach)
-            fragmentTransaction.attach(fragment);
-        else
-            fragmentTransaction.add(R.id.container, fragment);
-
-        fragmentTransaction.commit();
+    private synchronized void showMainFragment(Fragment fragment) {
+        fragmentManager.popBackStack();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        if (fragment != authorsFragment)
+            transaction.hide(authorsFragment);
+        if (fragment != allBooksFragment)
+            transaction.hide(allBooksFragment);
+        transaction.show(fragment);
+        transaction.commit();
     }
     //endregion
 

@@ -1,5 +1,6 @@
 package tr.name.fatihdogan.books.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -86,6 +87,7 @@ public class BooksFragment extends Fragment {
         return fragment;
     }
 
+    @SuppressLint("ResourceType")
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +100,7 @@ public class BooksFragment extends Fragment {
         }
 
         recyclerView = new RecyclerView(getActivity());
+        recyclerView.setId(10);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), getActivity().getResources().getInteger(R.integer.column)));
         booksAdapter = new BooksAdapter();
         recyclerView.setAdapter(booksAdapter);
