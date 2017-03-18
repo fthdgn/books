@@ -13,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,8 +22,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import tr.name.fatihdogan.books.BaseApplication;
-import tr.name.fatihdogan.books.activity.MainActivity;
 import tr.name.fatihdogan.books.data.Book;
+import tr.name.fatihdogan.books.view.AuthorView;
 
 public class AuthorsFragment extends Fragment {
 
@@ -90,39 +89,26 @@ public class AuthorsFragment extends Fragment {
 
     private class AuthorsViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView textView;
+        private final AuthorView authorView;
 
-        AuthorsViewHolder(TextView v) {
+        AuthorsViewHolder(AuthorView v) {
             super(v);
-            textView = v;
+            authorView = v;
         }
     }
-
-    private final View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (v instanceof TextView) {
-                Intent intent = new Intent(v.getContext(), MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                intent.putExtra("AUTHOR", ((TextView) v).getText());
-                v.getContext().startActivity(intent);
-            }
-        }
-    };
 
     private class AuthorsAdapter extends RecyclerView.Adapter<AuthorsViewHolder> {
 
         @Override
         public AuthorsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            TextView textView = new TextView(parent.getContext());
-            textView.setTextSize(20);
-            textView.setOnClickListener(onClickListener);
-            return new AuthorsViewHolder(textView);
+            AuthorView authorView = new AuthorView(parent.getContext());
+            authorView.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
+            return new AuthorsViewHolder(authorView);
         }
 
         @Override
         public void onBindViewHolder(AuthorsViewHolder holder, int position) {
-            holder.textView.setText(authors.get(position));
+            holder.authorView.setName(authors.get(position));
         }
 
         @Override

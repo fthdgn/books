@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 import tr.name.fatihdogan.books.BaseApplication;
 import tr.name.fatihdogan.books.Constants;
+import tr.name.fatihdogan.books.utils.ArrayUtils;
 import tr.name.fatihdogan.books.utils.FileUtils;
 import tr.name.fatihdogan.googlebooksapi.output.VolumeOutput;
 
@@ -294,6 +295,22 @@ public class Book {
             BOOKS.put(book.id, book);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        notifyChange();
+    }
+
+    /**
+     * Changes authors' names of all books
+     *
+     * @param oldName Author name which will be changed
+     * @param newName New author name
+     */
+    public static void changeAuthorNames(String oldName, String newName) {
+        for (Book book : BOOKS.values()) {
+            String[] authors = book.getAuthors();
+            if (authors != null)
+                ArrayUtils.replace(authors, oldName, newName);
+            book.setAuthors(authors);
         }
         notifyChange();
     }
