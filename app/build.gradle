@@ -26,7 +26,7 @@ android {
 }
 
 dependencies {
-    compile project(':google-books-api')
+    compile 'tr.name.fatihdogan:google-books-api:1.0'
     compile 'com.google.android.gms:play-services-auth:10.2.0'
     compile 'com.android.support:appcompat-v7:25.3.0'
     compile 'com.android.support:design:25.3.0'
