@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -58,16 +59,19 @@ public class Book {
     }
 
     public void setTitle(@Nullable String title) {
-        if (localData == null)
-            localData = new BookData();
         localDataDirty = true;
-        if (title == null) {
-            localData.title = null;
+        if (title != null)
+            title = title.trim();
+
+        if (title == null || title.equals("") || title.equals(onlineData.title)) {
+            if (localData != null)
+                localData.title = null;
             return;
         }
-        title = title.trim();
-        if (title.equals(""))
-            title = null;
+
+        if (localData == null)
+            localData = new BookData();
+
         localData.title = title;
     }
 
@@ -92,14 +96,19 @@ public class Book {
     }
 
     public void setSortTitle(@Nullable String sortTitle) {
+        localDataDirty = true;
+        if (sortTitle != null)
+            sortTitle = sortTitle.trim();
+
+        if (sortTitle == null || sortTitle.equals("") || sortTitle.equals(onlineData.title)) {
+            if (localData != null)
+                localData.sortTitle = null;
+            return;
+        }
+
         if (localData == null)
             localData = new BookData();
-        localDataDirty = true;
-        if (sortTitle != null) {
-            sortTitle = sortTitle.trim();
-            if (sortTitle.equals(""))
-                sortTitle = null;
-        }
+
         localData.sortTitle = sortTitle;
     }
 
@@ -127,15 +136,21 @@ public class Book {
     }
 
     private void setAuthors(@Nullable String[] authors) {
-        if (localData == null)
-            localData = new BookData();
         localDataDirty = true;
+
         if (authors != null && authors.length == 0)
             authors = null;
 
-        if (authors != null)
-            authors = authors.clone();
+        if (authors == null || Arrays.equals(authors, onlineData.author)) {
+            if (localData != null)
+                localData.author = null;
+            return;
+        }
 
+        if (localData == null)
+            localData = new BookData();
+
+        authors = authors.clone();
         localData.author = authors;
     }
 
@@ -311,6 +326,7 @@ public class Book {
             if (authors != null)
                 ArrayUtils.replace(authors, oldName, newName);
             book.setAuthors(authors);
+            book.save();
         }
         notifyChange();
     }

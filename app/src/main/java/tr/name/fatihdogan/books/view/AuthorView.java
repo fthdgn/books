@@ -106,6 +106,7 @@ public class AuthorView extends CardView implements View.OnClickListener, PopupM
         builder.setTitle(R.string.edit_author_name);
 
         final EditText input = new EditText(getContext());
+        input.setSingleLine();
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
