@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "0.1"
         multiDexEnabled true
+        project.ext.set("archivesBaseName", "books-" + defaultConfig.versionName);
     }
 
     buildTypes {
