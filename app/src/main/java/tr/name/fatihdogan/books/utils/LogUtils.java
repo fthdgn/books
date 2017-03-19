@@ -128,13 +128,24 @@ public class LogUtils {
         log(Log.ERROR, tag, msg, false);
     }
 
+    /**
+     * Use to track app, activity, fragment life cycles
+     *
+     * @param o   Object for class name
+     * @param msg Message
+     */
+    public static void lifecycle(Object o, String msg) {
+        i("Lifecycle", o.getClass().getSimpleName() + " " + msg, true);
+    }
+
     private static void log(int level, String tag, String msg, boolean firebase) {
         if (!BuildConfig.DEBUG)
             return;
 
-        Log.println(level, tag, msg);
         if (firebase)
             FirebaseCrash.logcat(level, tag, msg);
+        else
+            Log.println(level, tag, msg);
     }
 
 }
