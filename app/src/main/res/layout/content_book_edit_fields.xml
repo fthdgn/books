@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:showIn="@layout/activity_book_edit">
+
+    <TextView
+        android:id="@+id/title_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/book_edit_fields_margin"
+        android:layout_marginRight="@dimen/book_edit_fields_margin"
+        android:text="@string/title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <CheckBox
+        android:id="@+id/title_check_box"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/book_edit_fields_margin"
+        android:layout_marginStart="@dimen/book_edit_fields_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/title_edit_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/title_edit_text"
+        app:layout_constraintTop_toTopOf="@id/title_edit_text"/>
+
+    <EditText
+        android:id="@+id/title_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/book_edit_fields_margin"
+        android:layout_marginRight="@dimen/book_edit_fields_margin"
+        android:imeOptions="flagNoExtractUi"
+        android:inputType="text"
+        android:maxLines="1"
+        app:layout_constraintLeft_toRightOf="@id/title_check_box"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_text_view"/>
+
+    <TextView
+        android:id="@+id/sort_title_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/book_edit_fields_margin"
+        android:layout_marginRight="@dimen/book_edit_fields_margin"
+        android:text="@string/sort_title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_edit_text"/>
+
+    <CheckBox
+        android:id="@+id/sort_title_check_box"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/book_edit_fields_margin"
+        android:layout_marginStart="@dimen/book_edit_fields_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/sort_title_edit_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/sort_title_edit_text"
+        app:layout_constraintTop_toTopOf="@id/sort_title_edit_text"/>
+
+    <EditText
+        android:id="@+id/sort_title_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/book_edit_fields_margin"
+        android:layout_marginRight="@dimen/book_edit_fields_margin"
+        android:imeOptions="flagNoExtractUi"
+        android:inputType="text"
+        android:maxLines="1"
+        app:layout_constraintLeft_toRightOf="@id/sort_title_check_box"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sort_title_text_view"/>
+
+    <TextView
+        android:id="@+id/authors_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/book_edit_fields_margin"
+        android:layout_marginRight="@dimen/book_edit_fields_margin"
+        android:text="@string/authors"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sort_title_edit_text"/>
+
+    <CheckBox
+        android:id="@+id/authors_check_box"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/book_edit_fields_margin"
+        android:layout_marginStart="@dimen/book_edit_fields_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/authors_edit_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/authors_edit_text"
+        app:layout_constraintTop_toTopOf="@id/authors_edit_text"/>
+
+    <EditText
+        android:id="@+id/authors_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/book_edit_fields_margin"
+        android:layout_marginRight="@dimen/book_edit_fields_margin"
+        android:imeOptions="flagNoExtractUi"
+        android:inputType="text"
+        android:maxLines="1"
+        app:layout_constraintLeft_toRightOf="@+id/authors_check_box"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/authors_text_view"/>
+</android.support.constraint.ConstraintLayout>

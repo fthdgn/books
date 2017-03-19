@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    tools:context=".activity.BookEditActivity"
+    tools:ignore="ContentDescription">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/cover_image_view"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_marginBottom="@dimen/book_edit_fields_margin"
+            android:layout_marginEnd="@dimen/book_edit_fields_margin"
+            android:layout_marginLeft="@dimen/book_edit_fields_margin"
+            android:layout_marginRight="@dimen/book_edit_fields_margin"
+            android:layout_marginStart="@dimen/book_edit_fields_margin"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            app:layout_constraintBottom_toTopOf="@+id/include_edit_fields"
+            app:layout_constraintDimensionRatio="w,5:8"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:src="@android:color/darker_gray"/>
+
+        <ImageButton
+            android:id="@+id/change_cover_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/book_edit_fields_margin"
+            android:layout_marginRight="@dimen/book_edit_fields_margin"
+            android:background="@drawable/ic_camera"
+            app:layout_constraintBottom_toBottomOf="@id/cover_image_view"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+        <include
+            android:id="@+id/include_edit_fields"
+            layout="@layout/content_book_edit_fields"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

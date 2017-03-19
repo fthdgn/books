@@ -11,3 +11,5 @@
 
 #Keep code styling
 !/.idea/codeStyleSettings.xml
+#Keep inspection profiles
+!.idea/inspectionProfiles
