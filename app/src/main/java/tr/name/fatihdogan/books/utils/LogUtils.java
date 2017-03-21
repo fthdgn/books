@@ -139,12 +139,9 @@ public class LogUtils {
     }
 
     private static void log(int level, String tag, String msg, boolean firebase) {
-        if (!BuildConfig.DEBUG)
-            return;
-
         if (firebase)
             FirebaseCrash.logcat(level, tag, msg);
-        else
+        else if (BuildConfig.DEBUG)
             Log.println(level, tag, msg);
     }
 

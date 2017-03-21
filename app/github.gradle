@@ -1,0 +1,23 @@
+apply plugin: 'co.riiid.gradle'
+
+def githubProps = new Properties()
+file("github.properties").withInputStream { githubProps.load(it) }
+
+/**
+ * Example content of github.properties
+ * GITHUB_USER_NAME=fthdgn
+ * GITHUB_REPO_NAME=books
+ * GITHUB_TOKEN=xxxxxxxxxxxx
+ * GITHUB_TARGET=release
+ */
+
+github {
+    owner = githubProps.getProperty("GITHUB_USER_NAME")
+    repo = githubProps.getProperty("GITHUB_REPO_NAME")
+    token = githubProps.getProperty("GITHUB_TOKEN")
+    targetCommitish = githubProps.getProperty("GITHUB_TARGET")
+    tagName = "v" + android.defaultConfig.versionName
+    name = "v" + android.defaultConfig.versionName
+    draft = true
+    assets = ["$buildDir/outputs/apk/app-release.apk"]
+}
