@@ -3,3 +3,5 @@ build/
 signingRelease.gradle
 signingDebug.gradle
 google-services.json
+firebase-crashreporting.json
+github.properties

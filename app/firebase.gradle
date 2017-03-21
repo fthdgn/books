@@ -1,0 +1,6 @@
+apply plugin: 'com.google.firebase.firebase-crash'
+
+project.ext.FirebaseServiceAccountFilePath = "firebase-crashreporting.json"
+project.ext.FirebaseCrashMappingFilePath = "$buildDir/outputs/mapping/release/mapping.txt"
+project.ext.FirebaseCrashVersionCode = android.defaultConfig.versionCode
+project.ext.FirebaseCrashPackageName = android.defaultConfig.applicationId

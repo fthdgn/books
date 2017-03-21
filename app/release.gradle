@@ -1,0 +1,23 @@
+boolean signedRelease = file('signingRelease.gradle').exists()
+boolean enableGoogleServices = signedRelease && file("google-services.json").exists()
+boolean enableFirebaseMappingUpload = enableGoogleServices && file("firebase-crashreporting.json").exists()
+boolean enableGitHubRelease = file("github.properties").exists()
+
+if (enableGoogleServices)
+    apply plugin: 'com.google.gms.google-services'
+
+if (enableFirebaseMappingUpload)
+    apply from: 'firebase.gradle'
+
+if (enableGitHubRelease)
+    apply from: 'github.gradle'
+
+if (enableFirebaseMappingUpload && enableGitHubRelease) {
+    task cleanAssemble {}
+    task newRelease {}
+    cleanAssemble.dependsOn "clean"
+    cleanAssemble.finalizedBy "assembleRelease"
+    newRelease.dependsOn "cleanAssemble"
+    newRelease.finalizedBy 'firebaseUploadArchivedProguardMapping'
+    newRelease.finalizedBy 'githubRelease'
+}
