@@ -10,7 +10,10 @@ public class LogActivityLifecycleCallbacks implements Application.ActivityLifecy
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        LogUtils.lifecycle(activity, "onActivityCreated");
+        if (savedInstanceState == null)
+            LogUtils.lifecycle(activity, "onActivityCreated without state");
+        else
+            LogUtils.lifecycle(activity, "onActivityCreated with state");
     }
 
     @Override
