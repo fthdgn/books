@@ -89,7 +89,8 @@ public class ApiManager {
                                 }
                                 String authToken = BooksApiManager.getInstance().getAuthToken();
 
-                                for (final VolumeOutput volumeOutput : response != null ? response.items : new VolumeOutput[0]) {
+                                for (final VolumeOutput volumeOutput : (response != null && response.items != null) ? response.items : new
+                                        VolumeOutput[0]) {
                                     String url = "https://books.google.com/books/content?id=" + volumeOutput.id +
                                             "&printsec=frontcover&img=1&zoom=1&source=gbs_api&w=320&access_token=" + authToken;
 
