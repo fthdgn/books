@@ -139,7 +139,7 @@ public class LogUtils {
     }
 
     private static void log(int level, String tag, String msg, boolean firebase) {
-        if (firebase)
+        if (firebase && !BuildConfig.DEBUG)
             FirebaseCrash.logcat(level, tag, msg);
         else if (BuildConfig.DEBUG)
             Log.println(level, tag, msg);
