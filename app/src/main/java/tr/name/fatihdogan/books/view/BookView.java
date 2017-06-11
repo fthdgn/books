@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import tr.name.fatihdogan.books.R;
 import tr.name.fatihdogan.books.activity.BookEditActivity;
-import tr.name.fatihdogan.books.data.Book;
+import tr.name.fatihdogan.books.repository.Book;
 import tr.name.fatihdogan.books.utils.ImageUtils;
 
 public class BookView extends CardView implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
@@ -58,10 +58,10 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
         ViewCompat.setElevation(this, 5);
         inflate(context, R.layout.view_bookview, this);
         setUseCompatPadding(true);
-        coverImageView = (ImageView) findViewById(R.id.cover_image_view);
-        titleTextView = (TextView) findViewById(R.id.title_text_view);
-        authorTextView = (TextView) findViewById(R.id.author_text_view);
-        optionButton = (ImageButton) findViewById(R.id.option_button);
+        coverImageView = findViewById(R.id.cover_image_view);
+        titleTextView = findViewById(R.id.title_text_view);
+        authorTextView = findViewById(R.id.author_text_view);
+        optionButton = findViewById(R.id.option_button);
         optionButton.setOnClickListener(this);
         optionPopupMenu = new PopupMenu(context, optionButton);
         editMenuItem = optionPopupMenu.getMenu().add(R.string.edit);
@@ -129,9 +129,8 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
             optionPopupMenu.show();
         } else if (v.equals(this)) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://play.google.com/books/reader?id=" + book.getId()));
+            intent.setData(Uri.parse("https://play.google.com/books/reader?id=" + book.getBookId()));
             getContext().startActivity(intent);
-            book.updateLastUsageDate();
         }
     }
 
@@ -139,12 +138,12 @@ public class BookView extends CardView implements View.OnClickListener, PopupMen
     public boolean onMenuItemClick(MenuItem item) {
         if (item == editMenuItem) {
             Intent intent = new Intent(getContext(), BookEditActivity.class);
-            intent.putExtra("BOOK_ID", book.getId());
+            intent.putExtra("BOOK_ID", book.getBookId());
             getContext().startActivity(intent);
             return true;
         } else if (item == aboutMenuItem) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://play.google.com/store/books/details?id=" + book.getId()));
+            intent.setData(Uri.parse("https://play.google.com/store/books/details?id=" + book.getBookId()));
             getContext().startActivity(intent);
             return true;
         }

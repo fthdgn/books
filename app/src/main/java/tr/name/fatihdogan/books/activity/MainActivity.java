@@ -1,12 +1,12 @@
 package tr.name.fatihdogan.books.activity;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -15,7 +15,6 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import tr.name.fatihdogan.books.R;
 import tr.name.fatihdogan.books.apimanager.ApiManager;
 import tr.name.fatihdogan.books.callback.SimpleListener;
-import tr.name.fatihdogan.books.data.Book;
 import tr.name.fatihdogan.books.fragment.AuthorsFragment;
 import tr.name.fatihdogan.books.fragment.BooksFragment;
 
@@ -26,10 +25,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fragmentManager = getFragmentManager();
+        fragmentManager = getSupportFragmentManager();
 
         //region Prepare bottom navigation_main view
-        BottomNavigationViewEx navigation = (BottomNavigationViewEx) findViewById(R.id.navigation);
+        BottomNavigationViewEx navigation = findViewById(R.id.navigation);
         navigation.setTextVisibility(true);
         navigation.enableItemShiftingMode(false);
         navigation.enableShiftingMode(false);
@@ -133,7 +132,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
             });
             return true;
         } else if (id == R.id.logout_button) {
-            Book.clear();
+            //TODO Clear
             ApiManager.getInstance().setAccount(null, this);
             invalidateOptionsMenu();
             return true;

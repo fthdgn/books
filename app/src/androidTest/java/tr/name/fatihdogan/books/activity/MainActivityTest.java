@@ -13,7 +13,6 @@ import tr.name.fatihdogan.books.R;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.allOf;
 
@@ -26,15 +25,15 @@ public class MainActivityTest {
     @Test
     public void bottomNavigationClickTest() {
         ViewInteraction bottomNavigationItemView = onView(
-                allOf(withId(R.id.navigation_all), withContentDescription(R.string.all), isDisplayed()));
+                allOf(withId(R.id.navigation_all), isDisplayed()));
         bottomNavigationItemView.perform(click());
 
         bottomNavigationItemView = onView(
-                allOf(withId(R.id.navigation_authors), withContentDescription(R.string.authors), isDisplayed()));
+                allOf(withId(R.id.navigation_authors), isDisplayed()));
         bottomNavigationItemView.perform(click());
 
         bottomNavigationItemView = onView(
-                allOf(withId(R.id.navigation_bookshelves), withContentDescription(R.string.title_bookshelves), isDisplayed()));
+                allOf(withId(R.id.navigation_bookshelves), isDisplayed()));
         bottomNavigationItemView.perform(click());
     }
 }

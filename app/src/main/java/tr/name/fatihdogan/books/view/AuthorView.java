@@ -19,8 +19,9 @@ import android.widget.TextView;
 
 import tr.name.fatihdogan.books.R;
 import tr.name.fatihdogan.books.activity.MainActivity;
-import tr.name.fatihdogan.books.data.Book;
+import tr.name.fatihdogan.books.repository.AppDatabase;
 import tr.name.fatihdogan.books.utils.EditTextUtils;
+import tr.name.fatihdogan.books.utils.ThreadUtils;
 
 public class AuthorView extends CardView implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
@@ -53,8 +54,8 @@ public class AuthorView extends CardView implements View.OnClickListener, PopupM
         ViewCompat.setElevation(this, 5);
         inflate(context, R.layout.view_authorview, this);
         setUseCompatPadding(true);
-        nameTextView = (TextView) findViewById(R.id.name_text_view);
-        optionButton = (ImageButton) findViewById(R.id.option_button);
+        nameTextView = findViewById(R.id.name_text_view);
+        optionButton = findViewById(R.id.option_button);
         setOnClickListener(this);
         optionButton.setOnClickListener(this);
         optionPopupMenu = new PopupMenu(context, optionButton);
@@ -116,7 +117,12 @@ public class AuthorView extends CardView implements View.OnClickListener, PopupM
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Book.changeAuthorNames(nameTextView.getText().toString(), input.getText().toString());
+                ThreadUtils.runOnBackground(new Runnable() {
+                    @Override
+                    public void run() {
+                        AppDatabase.getBookDao().renameAuthor(nameTextView.getText().toString(), input.getText().toString());
+                    }
+                });
             }
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

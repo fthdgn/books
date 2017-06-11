@@ -1,8 +1,11 @@
 package tr.name.fatihdogan.books.activity;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +20,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 import tr.name.fatihdogan.books.R;
-import tr.name.fatihdogan.books.data.Book;
+import tr.name.fatihdogan.books.repository.AppDatabase;
+import tr.name.fatihdogan.books.repository.Book;
 import tr.name.fatihdogan.books.utils.EditTextUtils;
+import tr.name.fatihdogan.books.utils.ThreadUtils;
 
 public class BookEditActivity extends BaseActivity implements View.OnClickListener {
 
@@ -43,43 +48,48 @@ public class BookEditActivity extends BaseActivity implements View.OnClickListen
         setContentView(R.layout.activity_book_edit);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        coverImageView = findViewById(R.id.cover_image_view);
+        changeCoverButton = findViewById(R.id.change_cover_button);
+
+        titleEditText = findViewById(R.id.title_edit_text);
+        sortTitleEditText = findViewById(R.id.sort_title_edit_text);
+        authorsEditText = findViewById(R.id.authors_edit_text);
+
+        titleCheckBox = findViewById(R.id.title_check_box);
+        sortTitleCheckBox = findViewById(R.id.sort_title_check_box);
+        authorsCheckBox = findViewById(R.id.authors_check_box);
+
+        titleCheckBox.setOnClickListener(BookEditActivity.this);
+        sortTitleCheckBox.setOnClickListener(BookEditActivity.this);
+        authorsCheckBox.setOnClickListener(BookEditActivity.this);
 
         Intent intent = getIntent();
         bookId = intent.getStringExtra("BOOK_ID");
-        book = Book.BOOKS.get(bookId);
-        if (book == null) {
-            Toast.makeText(this, R.string.activity_start_error, Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-        coverImageView = (ImageView) findViewById(R.id.cover_image_view);
-        changeCoverButton = (ImageButton) findViewById(R.id.change_cover_button);
+        LiveData<Book> bookLiveData = AppDatabase.getBookDao().getByIdLive(bookId);
+        bookLiveData.observe(this, new Observer<Book>() {
+            @Override
+            public void onChanged(@Nullable Book book) {
+                if (book == null) {
+                    Toast.makeText(BookEditActivity.this, R.string.activity_start_error, Toast.LENGTH_SHORT).show();
+                } else {
+                    BookEditActivity.this.book = book;
+                    titleCheckBox.setChecked(!book.getTitle().equals(book.getOriginalTitle()));
+                    titleEditText.setEnabled(titleCheckBox.isChecked());
+                    titleEditText.setText(book.getTitle());
 
-        titleEditText = (EditText) findViewById(R.id.title_edit_text);
-        sortTitleEditText = (EditText) findViewById(R.id.sort_title_edit_text);
-        authorsEditText = (EditText) findViewById(R.id.authors_edit_text);
+                    sortTitleCheckBox.setChecked(!book.getSortTitle().equals(book.getOriginalTitle()));
+                    sortTitleEditText.setEnabled(sortTitleCheckBox.isChecked());
+                    sortTitleEditText.setText(book.getSortTitle());
 
-        titleCheckBox = (CheckBox) findViewById(R.id.title_check_box);
-        sortTitleCheckBox = (CheckBox) findViewById(R.id.sort_title_check_box);
-        authorsCheckBox = (CheckBox) findViewById(R.id.authors_check_box);
+                    authorsCheckBox.setChecked(!book.getFormattedAuthors().equals(book.getFormattedOriginalAuthors()));
+                    authorsEditText.setEnabled(authorsCheckBox.isChecked());
+                    authorsEditText.setText(book.getFormattedAuthors());
 
-        if (book.getCover() != null)
-            coverImageView.setImageURI(Uri.fromFile(new File(book.getCover())));
-
-        titleCheckBox.setChecked(book.getLocalTitle() != null);
-        titleEditText.setEnabled(titleCheckBox.isChecked());
-        titleEditText.setText(book.getTitle());
-        titleCheckBox.setOnClickListener(this);
-
-        sortTitleCheckBox.setChecked(book.getLocalSortTitle() != null);
-        sortTitleEditText.setEnabled(sortTitleCheckBox.isChecked());
-        sortTitleEditText.setText(book.getSortTitle());
-        sortTitleCheckBox.setOnClickListener(this);
-
-        authorsCheckBox.setChecked(book.getFormattedLocalAuthors() != null);
-        authorsEditText.setEnabled(authorsCheckBox.isChecked());
-        authorsEditText.setText(book.getFormattedAuthors());
-        authorsCheckBox.setOnClickListener(this);
+                    if (book.getCover() != null)
+                        coverImageView.setImageURI(Uri.fromFile(new File(book.getCover())));
+                }
+            }
+        });
 
         changeCoverButton.setOnClickListener(this);
     }
@@ -111,21 +121,21 @@ public class BookEditActivity extends BaseActivity implements View.OnClickListen
             titleEditText.setEnabled(titleCheckBox.isChecked());
             setNextFocuses();
             if (!titleCheckBox.isChecked())
-                titleEditText.setText(book.getOnlineTitle());
+                titleEditText.setText(book.getOriginalTitle());
             else
                 EditTextUtils.focusAndShowKeyboard(titleEditText);
         } else if (v == sortTitleCheckBox) {
             sortTitleEditText.setEnabled(sortTitleCheckBox.isChecked());
             setNextFocuses();
             if (!sortTitleCheckBox.isChecked())
-                sortTitleEditText.setText(book.getOnlineSortTitle());
+                sortTitleEditText.setText(book.getOriginalTitle());
             else
                 EditTextUtils.focusAndShowKeyboard(sortTitleEditText);
         } else if (v == authorsCheckBox) {
             authorsEditText.setEnabled(authorsCheckBox.isChecked());
             setNextFocuses();
             if (!authorsCheckBox.isChecked())
-                authorsEditText.setText(book.getFormattedOnlineAuthors());
+                authorsEditText.setText(book.getFormattedOriginalAuthors());
             else
                 EditTextUtils.focusAndShowKeyboard(authorsEditText);
         }
@@ -177,10 +187,16 @@ public class BookEditActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void save() {
-        book.setTitle(titleEditText.isEnabled() ? titleEditText.getText().toString() : null);
-        book.setSortTitle(sortTitleEditText.isEnabled() ? sortTitleEditText.getText().toString() : null);
-        book.setAuthors(authorsEditText.isEnabled() ? authorsEditText.getText().toString() : null);
-        book.save();
+        book.setTitle(titleEditText.getText().toString());
+        book.setSortTitle(sortTitleEditText.getText().toString());
+        book.setFormattedAuthors(authorsEditText.getText().toString());
+
+        ThreadUtils.runOnBackground(new Runnable() {
+            @Override
+            public void run() {
+                AppDatabase.getBookDao().insertAll(book);
+            }
+        });
         finish();
     }
 }

@@ -1,6 +1,7 @@
 package tr.name.fatihdogan.books.activity;
 
-import android.annotation.SuppressLint;
+import android.arch.lifecycle.LifecycleRegistry;
+import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.content.Intent;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IntRange;
@@ -10,9 +11,18 @@ import android.util.SparseArray;
 
 import tr.name.fatihdogan.books.callback.ActivityResultListener;
 
-@SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements LifecycleRegistryOwner {
 
+    //region LifecycleRegistryOwner
+    private final LifecycleRegistry mRegistry = new LifecycleRegistry(this);
+
+    @Override
+    public LifecycleRegistry getLifecycle() {
+        return mRegistry;
+    }
+    //endregion
+
+    //region ActivityResultListener
     private final SparseArray<ActivityResultListener> activityResultListeners = new SparseArray<>();
     private int listeners_last_index = -1;
 
@@ -79,5 +89,6 @@ public class BaseActivity extends AppCompatActivity {
         if (activityResultListeners.size() == 0)
             listeners_last_index = -1;
     }
+    //endregion
 
 }

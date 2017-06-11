@@ -16,12 +16,15 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.io.File;
+import java.util.Arrays;
 
 import tr.name.fatihdogan.books.Constants;
 import tr.name.fatihdogan.books.activity.BaseActivity;
 import tr.name.fatihdogan.books.callback.ActivityResultListener;
 import tr.name.fatihdogan.books.callback.SimpleListener;
-import tr.name.fatihdogan.books.data.Book;
+import tr.name.fatihdogan.books.repository.AppDatabase;
+import tr.name.fatihdogan.books.repository.Book;
+import tr.name.fatihdogan.books.utils.ThreadUtils;
 import tr.name.fatihdogan.googlebooksapi.BooksApi;
 import tr.name.fatihdogan.googlebooksapi.BooksApiManager;
 import tr.name.fatihdogan.googlebooksapi.NotInitializedException;
@@ -100,7 +103,20 @@ public class ApiManager {
                                             new SimpleListener() {
                                                 @Override
                                                 public void onResponse() {
-                                                    Book.createBook(volumeOutput);
+                                                    final Book book = new Book();
+                                                    book.setBookId(volumeOutput.id);
+                                                    book.setTitle(volumeOutput.volumeInfo.title);
+                                                    book.setSortTitle(book.getTitle());
+                                                    book.setOriginalTitle(book.getTitle());
+                                                    book.setAuthors(Arrays.asList(volumeOutput.volumeInfo.authors));
+                                                    book.setOriginalAuthors(book.getAuthors());
+                                                    ThreadUtils.runOnBackground(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            //TODO Don't override edited fields
+                                                            AppDatabase.getBookDao().insertAll(book);
+                                                        }
+                                                    });
                                                 }
                                             });
                                     FileDownloadRequest.addRequest(fileDownloadRequest);

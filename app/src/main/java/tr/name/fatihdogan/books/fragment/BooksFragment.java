@@ -1,15 +1,11 @@
 package tr.name.fatihdogan.books.fragment;
 
-import android.app.Fragment;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,26 +15,21 @@ import android.view.ViewGroup;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.List;
 
-import tr.name.fatihdogan.books.BaseApplication;
 import tr.name.fatihdogan.books.R;
-import tr.name.fatihdogan.books.data.Book;
-import tr.name.fatihdogan.books.utils.ArrayUtils;
+import tr.name.fatihdogan.books.repository.AppDatabase;
+import tr.name.fatihdogan.books.repository.Book;
 import tr.name.fatihdogan.books.view.BookView;
 
-public class BooksFragment extends Fragment {
+public class BooksFragment extends BaseFragment {
 
-    private static final int NONE = 0;
     private static final int ALL = 1;
     private static final int AUTHORS = 2;
     private static final int BOOKSHELF = 3;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
-            NONE,
             ALL,
             AUTHORS,
             BOOKSHELF
@@ -47,26 +38,11 @@ public class BooksFragment extends Fragment {
 
     }
 
-    @Filter
-    private int filterType;
     private String filterTerm;
 
     private RecyclerView recyclerView;
     private BooksAdapter booksAdapter;
     private final ArrayList<Book> books = new ArrayList<>();
-    private final Comparator<Book> titleComparator = new Comparator<Book>() {
-        @Override
-        public int compare(Book o1, Book o2) {
-            return o1.getSortTitle().compareTo(o2.getSortTitle());
-        }
-    };
-
-    private final BroadcastReceiver bookRefreshEvent = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            refresh();
-        }
-    };
 
     public static BooksFragment allBooksInstance() {
         return newInstance(ALL, null);
@@ -88,12 +64,14 @@ public class BooksFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        @Filter
+        int filterType;
         if (getArguments() != null) {
             filterTerm = getArguments().getString("filterTerm", "");
             //noinspection WrongConstant
-            filterType = getArguments().getInt("filterType", NONE);
+            filterType = getArguments().getInt("filterType", ALL);
         } else {
-            filterType = NONE;
+            filterType = ALL;
         }
 
         recyclerView = new RecyclerView(getActivity());
@@ -103,48 +81,35 @@ public class BooksFragment extends Fragment {
         booksAdapter = new BooksAdapter();
         recyclerView.setAdapter(booksAdapter);
 
-        refresh();
-        LocalBroadcastManager.getInstance(BaseApplication.getInstance()).registerReceiver(bookRefreshEvent,
-                new IntentFilter(Book.BOOKS_CHANGED_EVENT));
+        LiveData<List<Book>> bookLiveData;
+        switch (filterType) {
+            case ALL:
+                bookLiveData = AppDatabase.getBookDao().getAllSortedLive();
+                break;
+            case AUTHORS:
+                bookLiveData = AppDatabase.getBookDao().getByAuthorLive(filterTerm);
+                break;
+            case BOOKSHELF:
+                //TODO Implement
+            default:
+                bookLiveData = AppDatabase.getBookDao().getAllSortedLive();
+        }
+
+        bookLiveData.observe(this, new Observer<List<Book>>() {
+            @Override
+            public void onChanged(@Nullable List<Book> newBooks) {
+                books.clear();
+                if (newBooks != null)
+                    books.addAll(newBooks);
+                booksAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         return recyclerView;
-    }
-
-    @Override
-    public void onDestroy() {
-        LocalBroadcastManager.getInstance(BaseApplication.getInstance()).unregisterReceiver(bookRefreshEvent);
-        super.onDestroy();
-    }
-
-    private void refresh() {
-        books.clear();
-        Collection<Book> all_books = Book.BOOKS.values();
-        for (Book b : all_books) {
-            if (filter(b))
-                books.add(b);
-        }
-        Collections.sort(books, titleComparator);
-        booksAdapter.notifyDataSetChanged();
-    }
-
-    private boolean filter(Book book) {
-        switch (filterType) {
-            case NONE:
-                return false;
-            case ALL:
-                return true;
-            case AUTHORS:
-                return (ArrayUtils.contains(book.getAuthors(), filterTerm));
-            case BOOKSHELF:
-                //TODO Implement
-                return false;
-            default:
-                return false;
-        }
     }
 
     private class BookViewHolder extends RecyclerView.ViewHolder {
