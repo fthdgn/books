@@ -6,7 +6,7 @@ import android.arch.persistence.room.RoomDatabase;
 
 import tr.name.fatihdogan.books.BaseApplication;
 
-@Database(entities = {Book.class, Split.class}, version = 1)
+@Database(entities = {Book.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "app-database";

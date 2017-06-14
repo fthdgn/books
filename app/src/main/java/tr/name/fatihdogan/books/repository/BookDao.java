@@ -1,12 +1,16 @@
 package tr.name.fatihdogan.books.repository;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Transformations;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @SuppressWarnings("WeakerAccess")
 @Dao
@@ -44,29 +48,26 @@ public interface BookDao {
     @Query(GET_BY_AUTHOR)
     LiveData<List<Book>> getByAuthorLive(String author);
 
-    /*
-    Source:
-    http://sqlite.1065341.n5.nabble.com/comma-separated-string-data-tp74926p74941.html
-     */
-    String GET_ALL_AUTHORS = "" +
-            "   WITH split(len,c,r) AS ( " +
-            "       SELECT 1, authors, '' FROM book " +
-            "     UNION ALL " +
-            "       SELECT instr(c,'|') AS vLen, " +
-            "              substr(c,instr(c,'|')+1), " +
-            "              substr(c,1,instr(c,'|')-1) " +
-            "       FROM split " +
-            "       WHERE vLen>0 " +
-            "     ) " +
-            "   SELECT DISTINCT split.r FROM split " +
-            "   WHERE split.r<>'' " +
-            "   ORDER BY split.r";
+    @Query("SELECT authors FROM book")
+    List<AuthorContainer> getAuthors();
 
-    @Query(GET_ALL_AUTHORS)
-    List<String> getAllAuthors();
+    @Query("SELECT authors FROM book")
+    LiveData<List<AuthorContainer>> getAuthorsLive();
 
-    @Query(GET_ALL_AUTHORS)
-    LiveData<List<String>> getAllAuthorsLive();
+    static List<String> flattenAuthors(List<AuthorContainer> authorContainers) {
+        SortedSet<String> sortedSet = new TreeSet<>();
+        for (AuthorContainer authorContainer : authorContainers)
+            sortedSet.addAll(authorContainer.getAuthors());
+        return new ArrayList<>(sortedSet);
+    }
+
+    default List<String> getAllAuthors() {
+        return flattenAuthors(getAuthors());
+    }
+
+    default LiveData<List<String>> getAllAuthorsLive() {
+        return Transformations.map(getAuthorsLive(), BookDao::flattenAuthors);
+    }
 
     @Query("" +
             " UPDATE book " +
