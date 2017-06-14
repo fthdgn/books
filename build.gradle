@@ -5,10 +5,14 @@ buildscript {
         maven { url 'https://maven.google.com' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0-alpha3'
         classpath 'com.google.gms:google-services:3.0.0'
         classpath 'co.riiid:gradle-github-plugin:0.4.2'
-        classpath 'com.google.firebase:firebase-plugins:1.0.5'
+        classpath('com.google.firebase:firebase-plugins:1.0.5') {
+            // Fix exception on build, try to remove when gradle plugin 3.0.0 is stable
+            // java.lang.NoSuchMethodError: com.google.common.util.concurrent.MoreExecutors.directExecutor() Ljava/util/concurrent/Executor;
+            exclude group: 'com.google.guava', module: 'guava-jdk5'
+        }
     }
 }
 
