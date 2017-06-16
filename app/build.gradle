@@ -34,7 +34,7 @@ android {
 
 dependencies {
     def supportVersion = '26.0.0-beta2'
-    def playServiceVersion = '11.0.0'
+    def playServiceVersion = '11.0.1'
     def archVersion = '1.0.0-alpha2'
 
     compile "com.android.support:appcompat-v7:$supportVersion"
