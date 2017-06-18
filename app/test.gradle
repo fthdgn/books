@@ -1,0 +1,21 @@
+task completeTest {}
+
+configure(completeTest) {
+    group = 'verification'
+    description = 'Run unit and connected tests and open report on browser'
+}
+
+task openReport {
+    doLast {
+        try {
+            java.awt.Desktop.getDesktop().open(new File("$buildDir/reports/tests/testDebugUnitTest/index.html"))
+            java.awt.Desktop.getDesktop().open(new File("$buildDir/reports/androidTests/connected/index.html"))
+        } catch (Exception ignored) {
+        }
+    }
+}
+
+completeTest.dependsOn "connectedDebugAndroidTest"
+completeTest.dependsOn "testDebugUnitTest"
+completeTest.finalizedBy openReport
+

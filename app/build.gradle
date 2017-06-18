@@ -87,3 +87,9 @@ if (file('signingRelease.gradle').exists()) {
  */
 if (file('release.gradle').exists())
     apply from: 'release.gradle'
+
+/**
+ * Test specific configurations and tasks
+ */
+if (file('test.gradle').exists())
+    apply from: 'test.gradle'
