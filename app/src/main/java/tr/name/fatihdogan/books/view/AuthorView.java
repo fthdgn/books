@@ -61,7 +61,7 @@ public class AuthorView extends CardView implements View.OnClickListener, PopupM
         editMenuItem = optionPopupMenu.getMenu().add(R.string.edit);
         optionPopupMenu.setOnMenuItemClickListener(this);
         if (attrs != null) {
-            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BookView);
+            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AuthorView);
             setName(a.getText(R.styleable.AuthorView_name));
             a.recycle();
         }
