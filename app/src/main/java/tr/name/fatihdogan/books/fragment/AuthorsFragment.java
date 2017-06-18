@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import tr.name.fatihdogan.books.R;
 import tr.name.fatihdogan.books.repository.AppDatabase;
 import tr.name.fatihdogan.books.view.AuthorView;
 
@@ -34,8 +35,7 @@ public class AuthorsFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
 
         recyclerView = new RecyclerView(getActivity());
-        //noinspection ResourceType
-        recyclerView.setId(10);
+        recyclerView.setId(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         authorsAdapter = new AuthorsAdapter();
         recyclerView.setAdapter(authorsAdapter);

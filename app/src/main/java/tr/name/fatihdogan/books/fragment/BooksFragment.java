@@ -75,8 +75,7 @@ public class BooksFragment extends BaseFragment {
         }
 
         recyclerView = new RecyclerView(getActivity());
-        //noinspection ResourceType
-        recyclerView.setId(10);
+        recyclerView.setId(R.id.recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), getActivity().getResources().getInteger(R.integer.column)));
         booksAdapter = new BooksAdapter();
         recyclerView.setAdapter(booksAdapter);
