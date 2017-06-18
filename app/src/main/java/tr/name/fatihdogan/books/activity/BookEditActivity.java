@@ -1,11 +1,9 @@
 package tr.name.fatihdogan.books.activity;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,28 +64,25 @@ public class BookEditActivity extends BaseActivity implements View.OnClickListen
         Intent intent = getIntent();
         bookId = intent.getStringExtra("BOOK_ID");
         LiveData<Book> bookLiveData = AppDatabase.getBookDao().getByIdLive(bookId);
-        bookLiveData.observe(this, new Observer<Book>() {
-            @Override
-            public void onChanged(@Nullable Book book) {
-                if (book == null) {
-                    Toast.makeText(BookEditActivity.this, R.string.activity_start_error, Toast.LENGTH_SHORT).show();
-                } else {
-                    BookEditActivity.this.book = book;
-                    titleCheckBox.setChecked(!book.getTitle().equals(book.getOriginalTitle()));
-                    titleEditText.setEnabled(titleCheckBox.isChecked());
-                    titleEditText.setText(book.getTitle());
+        bookLiveData.observe(this, book -> {
+            if (book == null) {
+                Toast.makeText(BookEditActivity.this, R.string.activity_start_error, Toast.LENGTH_SHORT).show();
+            } else {
+                BookEditActivity.this.book = book;
+                titleCheckBox.setChecked(!book.getTitle().equals(book.getOriginalTitle()));
+                titleEditText.setEnabled(titleCheckBox.isChecked());
+                titleEditText.setText(book.getTitle());
 
-                    sortTitleCheckBox.setChecked(!book.getSortTitle().equals(book.getOriginalTitle()));
-                    sortTitleEditText.setEnabled(sortTitleCheckBox.isChecked());
-                    sortTitleEditText.setText(book.getSortTitle());
+                sortTitleCheckBox.setChecked(!book.getSortTitle().equals(book.getOriginalTitle()));
+                sortTitleEditText.setEnabled(sortTitleCheckBox.isChecked());
+                sortTitleEditText.setText(book.getSortTitle());
 
-                    authorsCheckBox.setChecked(!book.getFormattedAuthors().equals(book.getFormattedOriginalAuthors()));
-                    authorsEditText.setEnabled(authorsCheckBox.isChecked());
-                    authorsEditText.setText(book.getFormattedAuthors());
+                authorsCheckBox.setChecked(!book.getFormattedAuthors().equals(book.getFormattedOriginalAuthors()));
+                authorsEditText.setEnabled(authorsCheckBox.isChecked());
+                authorsEditText.setText(book.getFormattedAuthors());
 
-                    if (book.getCover() != null)
-                        coverImageView.setImageURI(Uri.fromFile(new File(book.getCover())));
-                }
+                if (book.getCover() != null)
+                    coverImageView.setImageURI(Uri.fromFile(new File(book.getCover())));
             }
         });
 
@@ -191,12 +186,7 @@ public class BookEditActivity extends BaseActivity implements View.OnClickListen
         book.setSortTitle(sortTitleEditText.getText().toString());
         book.setFormattedAuthors(authorsEditText.getText().toString());
 
-        ThreadUtils.runOnBackground(new Runnable() {
-            @Override
-            public void run() {
-                AppDatabase.getBookDao().insertAll(book);
-            }
-        });
+        ThreadUtils.runOnBackground(() -> AppDatabase.getBookDao().insertAll(book));
         finish();
     }
 }

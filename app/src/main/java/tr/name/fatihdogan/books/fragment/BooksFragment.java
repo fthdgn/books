@@ -1,7 +1,6 @@
 package tr.name.fatihdogan.books.fragment;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
@@ -94,14 +93,11 @@ public class BooksFragment extends BaseFragment {
                 bookLiveData = AppDatabase.getBookDao().getAllSortedLive();
         }
 
-        bookLiveData.observe(this, new Observer<List<Book>>() {
-            @Override
-            public void onChanged(@Nullable List<Book> newBooks) {
-                books.clear();
-                if (newBooks != null)
-                    books.addAll(newBooks);
-                booksAdapter.notifyDataSetChanged();
-            }
+        bookLiveData.observe(this, newBooks -> {
+            books.clear();
+            if (newBooks != null)
+                books.addAll(newBooks);
+            booksAdapter.notifyDataSetChanged();
         });
     }
 

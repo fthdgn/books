@@ -1,7 +1,6 @@
 package tr.name.fatihdogan.books.fragment;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,17 +40,14 @@ public class AuthorsFragment extends BaseFragment {
         recyclerView.setAdapter(authorsAdapter);
 
         LiveData<List<String>> authorsLiveData = AppDatabase.getBookDao().getAllAuthorsLive();
-        authorsLiveData.observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(@Nullable List<String> strings) {
-                authors.clear();
-                if (strings == null) {
-                    return;
-                } else {
-                    authors.addAll(strings);
-                }
-                authorsAdapter.notifyDataSetChanged();
+        authorsLiveData.observe(this, strings -> {
+            authors.clear();
+            if (strings == null) {
+                return;
+            } else {
+                authors.addAll(strings);
             }
+            authorsAdapter.notifyDataSetChanged();
         });
     }
 

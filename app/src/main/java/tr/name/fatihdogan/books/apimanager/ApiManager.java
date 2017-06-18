@@ -20,7 +20,6 @@ import java.util.Arrays;
 
 import tr.name.fatihdogan.books.Constants;
 import tr.name.fatihdogan.books.activity.BaseActivity;
-import tr.name.fatihdogan.books.callback.ActivityResultListener;
 import tr.name.fatihdogan.books.callback.SimpleListener;
 import tr.name.fatihdogan.books.repository.AppDatabase;
 import tr.name.fatihdogan.books.repository.Book;
@@ -30,8 +29,6 @@ import tr.name.fatihdogan.googlebooksapi.BooksApiManager;
 import tr.name.fatihdogan.googlebooksapi.NotInitializedException;
 import tr.name.fatihdogan.googlebooksapi.Parameters;
 import tr.name.fatihdogan.googlebooksapi.constants.ParameterConstants;
-import tr.name.fatihdogan.googlebooksapi.listener.Listener;
-import tr.name.fatihdogan.googlebooksapi.output.VolumeListOutput;
 import tr.name.fatihdogan.googlebooksapi.output.VolumeOutput;
 
 public class ApiManager {
@@ -61,101 +58,76 @@ public class ApiManager {
                 intent = AccountManager.newChooseAccountIntent(null, null, accountTypes, null, null, null, null);
             }
 
-            activity.startActivityForResult(intent, new ActivityResultListener() {
-                @Override
-                public void onActivityResult(int resultCode, Intent data) {
-                    if (resultCode == Activity.RESULT_OK) {
-                        Account account = new Account(
-                                data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME),
-                                data.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
+            activity.startActivityForResult(intent, (resultCode, data) -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    Account account = new Account(
+                            data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME),
+                            data.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
 
-                        getInstance().setAccount(account, activity);
-                        sync(activity, callback);
-                    }
+                    getInstance().setAccount(account, activity);
+                    sync(activity, callback);
                 }
             });
             return;
         }
 
-        TokenRetriever tokenRetriever = new TokenRetriever(activity, getInstance().account, new TokenRetriever.OnSuccessListener() {
-            @Override
-            public void onSuccess(String token) {
-                BooksApiManager.getInstance().setAuthToken(token);
-                //TODO Implement paging
-                BooksApi.MyLibrary.Bookshelves.Volumes.list(
-                        new Parameters.MyLibrary.Bookshelves.Volumes.List("7").maxResults(100).projection(ParameterConstants.LITE),
-                        new Listener<VolumeListOutput>() {
-                            @Override
-                            public void onResponse(@Nullable VolumeListOutput response, @Nullable Exception e) {
-                                if (e instanceof NotInitializedException) {
-                                    BooksApiManager.initialize(activity);
-                                }
-                                String authToken = BooksApiManager.getInstance().getAuthToken();
+        TokenRetriever tokenRetriever = new TokenRetriever(activity, getInstance().account, token -> {
+            BooksApiManager.getInstance().setAuthToken(token);
+            //TODO Implement paging
+            BooksApi.MyLibrary.Bookshelves.Volumes.list(
+                    new Parameters.MyLibrary.Bookshelves.Volumes.List("7").maxResults(100).projection(ParameterConstants.LITE),
+                    (response, e) -> {
+                        if (e instanceof NotInitializedException) {
+                            BooksApiManager.initialize(activity);
+                        }
+                        String authToken = BooksApiManager.getInstance().getAuthToken();
 
-                                for (final VolumeOutput volumeOutput : (response != null && response.items != null) ? response.items : new
-                                        VolumeOutput[0]) {
-                                    String url = "https://books.google.com/books/content?id=" + volumeOutput.id +
-                                            "&printsec=frontcover&img=1&zoom=1&source=gbs_api&w=320&access_token=" + authToken;
+                        for (final VolumeOutput volumeOutput : (response != null && response.items != null) ? response.items : new
+                                VolumeOutput[0]) {
+                            String url = "https://books.google.com/books/content?id=" + volumeOutput.id +
+                                    "&printsec=frontcover&img=1&zoom=1&source=gbs_api&w=320&access_token=" + authToken;
 
-                                    FileDownloadRequest fileDownloadRequest = new FileDownloadRequest(
-                                            url,
-                                            Constants.localCoverPath + File.separator + volumeOutput.id,
-                                            new SimpleListener() {
-                                                @Override
-                                                public void onResponse() {
-                                                    final Book book = new Book();
-                                                    book.setBookId(volumeOutput.id);
-                                                    book.setTitle(volumeOutput.volumeInfo.title);
-                                                    book.setSortTitle(book.getTitle());
-                                                    book.setOriginalTitle(book.getTitle());
-                                                    book.setAuthors(Arrays.asList(volumeOutput.volumeInfo.authors));
-                                                    book.setOriginalAuthors(book.getAuthors());
-                                                    ThreadUtils.runOnBackground(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            //TODO Don't override edited fields
-                                                            AppDatabase.getBookDao().insertAll(book);
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                    FileDownloadRequest.addRequest(fileDownloadRequest);
-                                }
-                                callback.onResponse();
-                            }
-                        });
-
-            }
+                            FileDownloadRequest fileDownloadRequest = new FileDownloadRequest(
+                                    url,
+                                    Constants.localCoverPath + File.separator + volumeOutput.id,
+                                    () -> {
+                                        final Book book = new Book();
+                                        book.setBookId(volumeOutput.id);
+                                        book.setTitle(volumeOutput.volumeInfo.title);
+                                        book.setSortTitle(book.getTitle());
+                                        book.setOriginalTitle(book.getTitle());
+                                        book.setAuthors(Arrays.asList(volumeOutput.volumeInfo.authors));
+                                        book.setOriginalAuthors(book.getAuthors());
+                                        ThreadUtils.runOnBackground(() -> {
+                                            //TODO Don't override edited fields
+                                            AppDatabase.getBookDao().insertAll(book);
+                                        });
+                                    });
+                            FileDownloadRequest.addRequest(fileDownloadRequest);
+                        }
+                        callback.onResponse();
+                    });
         }, new TokenRetriever.OnErrorListener() {
             @Override
             public void onRecoverableException(final Exception e) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (e instanceof GooglePlayServicesAvailabilityException) {
-                            GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
-                            int code = googleApiAvailability.isGooglePlayServicesAvailable(activity);
-                            if (code != ConnectionResult.SUCCESS) {
-                                int requestCode = activity.addActivityResultListener(new ActivityResultListener() {
-                                    @Override
-                                    public void onActivityResult(int resultCode, Intent data) {
-                                        if (resultCode == Activity.RESULT_OK)
-                                            sync(activity, callback);
-                                    }
-                                });
-                                Dialog dialog = googleApiAvailability.getErrorDialog(activity, code, requestCode);
-                                dialog.show();
-                            }
-                        } else if (e instanceof UserRecoverableAuthException) {
-                            Intent intent = ((UserRecoverableAuthException) e).getIntent();
-                            activity.startActivityForResult(intent, new ActivityResultListener() {
-                                @Override
-                                public void onActivityResult(int resultCode, Intent data) {
-                                    if (resultCode == Activity.RESULT_OK)
-                                        sync(activity, callback);
-                                }
+                activity.runOnUiThread(() -> {
+                    if (e instanceof GooglePlayServicesAvailabilityException) {
+                        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+                        int code = googleApiAvailability.isGooglePlayServicesAvailable(activity);
+                        if (code != ConnectionResult.SUCCESS) {
+                            int requestCode = activity.addActivityResultListener((resultCode, data) -> {
+                                if (resultCode == Activity.RESULT_OK)
+                                    sync(activity, callback);
                             });
+                            Dialog dialog = googleApiAvailability.getErrorDialog(activity, code, requestCode);
+                            dialog.show();
                         }
+                    } else if (e instanceof UserRecoverableAuthException) {
+                        Intent intent = ((UserRecoverableAuthException) e).getIntent();
+                        activity.startActivityForResult(intent, (resultCode, data) -> {
+                            if (resultCode == Activity.RESULT_OK)
+                                sync(activity, callback);
+                        });
                     }
                 });
             }

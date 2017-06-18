@@ -14,7 +14,6 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import tr.name.fatihdogan.books.R;
 import tr.name.fatihdogan.books.apimanager.ApiManager;
-import tr.name.fatihdogan.books.callback.SimpleListener;
 import tr.name.fatihdogan.books.fragment.AuthorsFragment;
 import tr.name.fatihdogan.books.fragment.BooksFragment;
 
@@ -116,20 +115,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.sync_button) {
-            ApiManager.sync(this, new SimpleListener() {
-                @Override
-                public void onResponse() {
-                    invalidateOptionsMenu();
-                }
-            });
+            ApiManager.sync(this, this::invalidateOptionsMenu);
             return true;
         } else if (id == R.id.login_button) {
-            ApiManager.sync(this, new SimpleListener() {
-                @Override
-                public void onResponse() {
-                    invalidateOptionsMenu();
-                }
-            });
+            ApiManager.sync(this, this::invalidateOptionsMenu);
             return true;
         } else if (id == R.id.logout_button) {
             //TODO Clear

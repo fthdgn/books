@@ -1,7 +1,6 @@
 package tr.name.fatihdogan.books.view;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
@@ -114,23 +113,11 @@ public class AuthorView extends CardView implements View.OnClickListener, PopupM
         input.setText(getName());
         input.setLayoutParams(lp);
         builder.setView(input);
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                ThreadUtils.runOnBackground(new Runnable() {
-                    @Override
-                    public void run() {
-                        AppDatabase.getBookDao().renameAuthor(nameTextView.getText().toString(), input.getText().toString());
-                    }
-                });
-            }
-        });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        builder.setPositiveButton(android.R.string.ok, (dialog, which) ->
+                ThreadUtils.runOnBackground(() ->
+                        AppDatabase.getBookDao().renameAuthor(
+                                nameTextView.getText().toString(), input.getText().toString())));
+        builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
         builder.show();
 
         EditTextUtils.focusAndShowKeyboard(input);
