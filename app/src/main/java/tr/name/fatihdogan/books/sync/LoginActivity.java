@@ -2,12 +2,14 @@ package tr.name.fatihdogan.books.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
+import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.os.Bundle;
 
 import tr.name.fatihdogan.books.R;
+import tr.name.fatihdogan.books.activity.BaseActivity;
 
-public class LoginActivity extends AccountAuthenticatorActivity {
+public class LoginActivity extends BaseActivity {
 
     private AccountManager mAccountManager;
     // The authority for the sync adapter's content provider
@@ -19,6 +21,8 @@ public class LoginActivity extends AccountAuthenticatorActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        onCreateAccountAuthenticator();
 
         mAccountManager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
 
@@ -32,4 +36,51 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         finish();
 
     }
+
+    @Override
+    public void finish() {
+        finishAccountAuthenticator();
+        super.finish();
+    }
+
+    //region AccountAuthenticatorActivity
+    private AccountAuthenticatorResponse mAccountAuthenticatorResponse = null;
+    private Bundle mResultBundle = null;
+
+    /**
+     * @see AccountAuthenticatorActivity#setAccountAuthenticatorResult(Bundle)
+     */
+    public final void setAccountAuthenticatorResult(Bundle result) {
+        mResultBundle = result;
+    }
+
+    /**
+     * @see AccountAuthenticatorActivity#onCreate(Bundle)
+     */
+    private void onCreateAccountAuthenticator() {
+        mAccountAuthenticatorResponse =
+                getIntent().getParcelableExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE);
+
+        if (mAccountAuthenticatorResponse != null) {
+            mAccountAuthenticatorResponse.onRequestContinued();
+        }
+    }
+
+    /**
+     * @see AccountAuthenticatorActivity#finish()
+     */
+    private void finishAccountAuthenticator() {
+        if (mAccountAuthenticatorResponse != null) {
+            // send the result bundle back if set, otherwise send an error.
+            if (mResultBundle != null) {
+                mAccountAuthenticatorResponse.onResult(mResultBundle);
+            } else {
+                mAccountAuthenticatorResponse.onError(AccountManager.ERROR_CODE_CANCELED,
+                        "canceled");
+            }
+            mAccountAuthenticatorResponse = null;
+        }
+    }
+    //endregion
+
 }
