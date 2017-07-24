@@ -93,3 +93,9 @@ if (file('release.gradle').exists())
  */
 if (file('test.gradle').exists())
     apply from: 'test.gradle'
+
+/**
+ * Development specific configurations and tasks
+ */
+if (file('development.gradle').exists())
+    apply from: 'development.gradle'
