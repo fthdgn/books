@@ -50,16 +50,14 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.1'
     implementation 'com.android.volley:volley:1.0.0'
     implementation 'tr.name.fatihdogan:google-books-api:1.0'
-    implementation('com.github.ittianyu:BottomNavigationViewEx:1.2.2') {
-        exclude group: 'com.android.support'
-    }
+    implementation 'com.github.ittianyu:BottomNavigationViewEx:1.2.2'
 
     annotationProcessor "android.arch.persistence.room:compiler:$archVersion"
     annotationProcessor "android.arch.lifecycle:compiler:$archVersion"
 
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.3-alpha', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    androidTestImplementation 'com.android.support.test:runner:1.0.0'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.0'
+
     testImplementation 'junit:junit:4.12'
 }
 
