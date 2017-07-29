@@ -1,6 +1,8 @@
 package tr.name.fatihdogan.books.fragment;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,7 +22,6 @@ public class AuthorsFragment extends BaseFragment {
 
     private RecyclerView recyclerView;
     private AuthorsAdapter authorsAdapter;
-    private final List<String> authors = new ArrayList<>();
 
     public static AuthorsFragment newInstance() {
         Bundle args = new Bundle();
@@ -32,6 +33,7 @@ public class AuthorsFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyViewModel myViewModel = ViewModelProviders.of(this).get(MyViewModel.class);
 
         recyclerView = new RecyclerView(getActivity());
         recyclerView.setId(R.id.recycler_view);
@@ -39,16 +41,7 @@ public class AuthorsFragment extends BaseFragment {
         authorsAdapter = new AuthorsAdapter();
         recyclerView.setAdapter(authorsAdapter);
 
-        LiveData<List<String>> authorsLiveData = AppDatabase.getBookDao().getAllAuthorsLive();
-        authorsLiveData.observe(this, strings -> {
-            authors.clear();
-            if (strings == null) {
-                return;
-            } else {
-                authors.addAll(strings);
-            }
-            authorsAdapter.notifyDataSetChanged();
-        });
+        myViewModel.getAuthors().observe(this, authors -> authorsAdapter.setAuthors(authors));
     }
 
     @Nullable
@@ -69,6 +62,8 @@ public class AuthorsFragment extends BaseFragment {
 
     private class AuthorsAdapter extends RecyclerView.Adapter<AuthorsViewHolder> {
 
+        private List<String> authors = new ArrayList<>();
+
         @Override
         public AuthorsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             AuthorView authorView = new AuthorView(parent.getContext());
@@ -84,6 +79,22 @@ public class AuthorsFragment extends BaseFragment {
         @Override
         public int getItemCount() {
             return authors.size();
+        }
+
+        private void setAuthors(List<String> authors) {
+            this.authors = authors;
+            notifyDataSetChanged();
+        }
+    }
+
+    public static class MyViewModel extends ViewModel {
+
+        LiveData<List<String>> authorsLiveData;
+
+        LiveData<List<String>> getAuthors() {
+            if (authorsLiveData == null)
+                authorsLiveData = AppDatabase.getBookDao().getAllAuthorsLive();
+            return authorsLiveData;
         }
     }
 

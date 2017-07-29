@@ -1,6 +1,8 @@
 package tr.name.fatihdogan.books.activity;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +27,8 @@ import tr.name.fatihdogan.books.utils.ThreadUtils;
 
 public class BookEditActivity extends BaseActivity implements View.OnClickListener {
 
+    private MyViewModel viewModel;
+
     @SuppressWarnings("FieldCanBeLocal")
     private String bookId;
     private Book book;
@@ -44,6 +48,7 @@ public class BookEditActivity extends BaseActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_edit);
+        viewModel = ViewModelProviders.of(this).get(MyViewModel.class);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         coverImageView = findViewById(R.id.cover_image_view);
@@ -63,8 +68,7 @@ public class BookEditActivity extends BaseActivity implements View.OnClickListen
 
         Intent intent = getIntent();
         bookId = intent.getStringExtra("BOOK_ID");
-        LiveData<Book> bookLiveData = AppDatabase.getBookDao().getByIdLive(bookId);
-        bookLiveData.observe(this, book -> {
+        viewModel.getBook(bookId).observe(this, book -> {
             if (book == null) {
                 Toast.makeText(BookEditActivity.this, R.string.activity_start_error, Toast.LENGTH_SHORT).show();
             } else {
@@ -186,7 +190,24 @@ public class BookEditActivity extends BaseActivity implements View.OnClickListen
         book.setSortTitle(sortTitleEditText.getText().toString());
         book.setFormattedAuthors(authorsEditText.getText().toString());
 
-        ThreadUtils.runOnBackground(() -> AppDatabase.getBookDao().insertAll(book));
+        viewModel.saveBook(book);
+
         finish();
     }
+
+    public static class MyViewModel extends ViewModel {
+
+        private LiveData<Book> bookLiveData;
+
+        LiveData<Book> getBook(String bookId) {
+            if (bookLiveData == null)
+                bookLiveData = AppDatabase.getBookDao().getByIdLive(bookId);
+            return bookLiveData;
+        }
+
+        void saveBook(Book book) {
+            ThreadUtils.runOnBackground(() -> AppDatabase.getBookDao().insertAll(book));
+        }
+    }
+
 }

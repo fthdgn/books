@@ -1,6 +1,8 @@
 package tr.name.fatihdogan.books.fragment;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
@@ -41,7 +43,6 @@ public class BooksFragment extends BaseFragment {
 
     private RecyclerView recyclerView;
     private BooksAdapter booksAdapter;
-    private final ArrayList<Book> books = new ArrayList<>();
 
     public static BooksFragment allBooksInstance() {
         return newInstance(ALL, null);
@@ -63,6 +64,8 @@ public class BooksFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyViewModel myViewModel = ViewModelProviders.of(this).get(MyViewModel.class);
+
         @Filter
         int filterType;
         if (getArguments() != null) {
@@ -79,26 +82,7 @@ public class BooksFragment extends BaseFragment {
         booksAdapter = new BooksAdapter();
         recyclerView.setAdapter(booksAdapter);
 
-        LiveData<List<Book>> bookLiveData;
-        switch (filterType) {
-            case ALL:
-                bookLiveData = AppDatabase.getBookDao().getAllSortedLive();
-                break;
-            case AUTHORS:
-                bookLiveData = AppDatabase.getBookDao().getByAuthorLive(filterTerm);
-                break;
-            case BOOKSHELF:
-                //TODO Implement
-            default:
-                bookLiveData = AppDatabase.getBookDao().getAllSortedLive();
-        }
-
-        bookLiveData.observe(this, newBooks -> {
-            books.clear();
-            if (newBooks != null)
-                books.addAll(newBooks);
-            booksAdapter.notifyDataSetChanged();
-        });
+        myViewModel.getBooks(filterType, filterTerm).observe(this, books -> booksAdapter.setBooks(books));
     }
 
     @Nullable
@@ -119,6 +103,8 @@ public class BooksFragment extends BaseFragment {
 
     private class BooksAdapter extends RecyclerView.Adapter<BookViewHolder> {
 
+        private List<Book> books = new ArrayList<>();
+
         @Override
         public BookViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             BookView bookView = new BookView(parent.getContext());
@@ -133,6 +119,34 @@ public class BooksFragment extends BaseFragment {
         @Override
         public int getItemCount() {
             return books.size();
+        }
+
+        private void setBooks(List<Book> books) {
+            this.books = books;
+            notifyDataSetChanged();
+        }
+    }
+
+    public static class MyViewModel extends ViewModel {
+
+        LiveData<List<Book>> bookLiveData;
+
+        LiveData<List<Book>> getBooks(@Filter int filterType, String filterTerm) {
+            if (bookLiveData == null) {
+                switch (filterType) {
+                    case ALL:
+                        bookLiveData = AppDatabase.getBookDao().getAllSortedLive();
+                        break;
+                    case AUTHORS:
+                        bookLiveData = AppDatabase.getBookDao().getByAuthorLive(filterTerm);
+                        break;
+                    case BOOKSHELF:
+                        //TODO Implement
+                    default:
+                        bookLiveData = AppDatabase.getBookDao().getAllSortedLive();
+                }
+            }
+            return bookLiveData;
         }
     }
 }
