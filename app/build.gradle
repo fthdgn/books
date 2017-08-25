@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "tr.name.fatihdogan.books"
         minSdkVersion 16
@@ -34,8 +34,8 @@ android {
 
 dependencies {
     def supportVersion = '26.0.1'
-    def playServiceVersion = '11.0.4'
-    def archVersion = '1.0.0-alpha8'
+    def playServiceVersion = '11.2.0'
+    def archVersion = '1.0.0-alpha9'
 
     implementation "com.android.support:appcompat-v7:$supportVersion"
     implementation "com.android.support:design:$supportVersion"
