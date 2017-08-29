@@ -36,8 +36,9 @@ RUN wget -q https://dl.google.com/android/repository/platform-26_r02.zip && \
     mv android-sdk/platforms/android-8.0.0/ android-sdk/platforms/android-26 && \
     rm platform-26_r02.zip
 
-# Set ANDROID_SDK_ROOT aka deprecated ANDROID_HOME
+# Set ANDROID_SDK_ROOT ANDROID_HOME
 ENV ANDROID_SDK_ROOT=/android-sdk
+ENV ANDROID_HOME=/android-sdk
 
 # Set PATH
 ENV PATH="/android-sdk/tools/:/android-sdk/tools/bin/:/android-sdk/platform-tools/:${PATH}"
