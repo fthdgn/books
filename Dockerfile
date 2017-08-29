@@ -22,12 +22,12 @@ RUN wget -q https://dl.google.com/android/repository/platform-tools_r26.0.0-linu
     unzip -q platform-tools_r26.0.0-linux.zip -d android-sdk && \
     rm platform-tools_r26.0.0-linux.zip
 
-# Android SDK Build-Tools 26 r26.0.0
+# Android SDK Build-Tools 26 r26.0.1
 # For update: https://dl.google.com/android/repository/repository2-1.xml
-RUN wget -q https://dl.google.com/android/repository/build-tools_r26-linux.zip && \
-    unzip -q build-tools_r26-linux.zip -d android-sdk/build-tools && \
+RUN wget -q https://dl.google.com/android/repository/build-tools_r26.0.1-linux.zip && \
+    unzip -q build-tools_r26.0.1-linux.zip -d android-sdk/build-tools && \
     mv android-sdk/build-tools/android-8.0.0/ android-sdk/build-tools/26.0.0 && \
-    rm build-tools_r26-linux.zip
+    rm build-tools_r26.0.1-linux.zip
 
 # Android SDK Platform 26 r2
 # For update: https://dl.google.com/android/repository/repository2-1.xml
