@@ -1,6 +1,5 @@
 package tr.name.fatihdogan.books.utils;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -16,7 +15,7 @@ public class EditTextUtils {
      */
     public static void focusAndShowKeyboard(@NonNull EditText editText) {
         editText.requestFocus();
-        InputMethodManager imm = (InputMethodManager) BaseApplication.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = BaseApplication.getAppComponent().inputMethodManager();
         imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
         editText.setSelection(editText.getText().length());
     }

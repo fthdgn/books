@@ -16,15 +16,18 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import tr.name.fatihdogan.books.BaseApplication;
 import tr.name.fatihdogan.books.R;
 import tr.name.fatihdogan.books.activity.MainActivity;
-import tr.name.fatihdogan.books.repository.AppDatabase;
+import tr.name.fatihdogan.books.repository.BookDao;
 import tr.name.fatihdogan.books.utils.EditTextUtils;
 import tr.name.fatihdogan.books.utils.ThreadUtils;
 
 public class AuthorView extends CardView implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
     private static final String TOOLS_NS = "http://schemas.android.com/tools";
+
+    private BookDao bookDao;
 
     private TextView nameTextView;
     private ImageButton optionButton;
@@ -49,6 +52,7 @@ public class AuthorView extends CardView implements View.OnClickListener, PopupM
     }
 
     private void init(Context context, @Nullable AttributeSet attrs) {
+        bookDao = BaseApplication.getAppComponent().bookDao();
         setRadius(5);
         ViewCompat.setElevation(this, 5);
         inflate(context, R.layout.view_authorview, this);
@@ -75,7 +79,7 @@ public class AuthorView extends CardView implements View.OnClickListener, PopupM
         nameTextView.setText(name);
     }
 
-    public CharSequence getName() {
+    private CharSequence getName() {
         return nameTextView.getText();
     }
 
@@ -115,7 +119,7 @@ public class AuthorView extends CardView implements View.OnClickListener, PopupM
         builder.setView(input);
         builder.setPositiveButton(android.R.string.ok, (dialog, which) ->
                 ThreadUtils.runOnBackground(() ->
-                        AppDatabase.getBookDao().renameAuthor(
+                        bookDao.renameAuthor(
                                 nameTextView.getText().toString(), input.getText().toString())));
         builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
         builder.show();

@@ -6,11 +6,9 @@ import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import tr.name.fatihdogan.books.Constants;
 import tr.name.fatihdogan.books.utils.ObjectUtils;
 
 @SuppressWarnings("WeakerAccess")
@@ -116,11 +114,11 @@ public class Book {
         else if (array.size() == 1)
             return array.get(0);
         else {
-            String s;
-            s = array.get(0);
+            StringBuilder s;
+            s = new StringBuilder(array.get(0));
             for (int i = 1; i < array.size(); i++)
-                s += ", " + array.get(i);
-            return s;
+                s.append(", ").append(array.get(i));
+            return s.toString();
         }
     }
 
@@ -140,17 +138,4 @@ public class Book {
         //TODO Be sure never returns array with length 0
     }
 
-    @Nullable
-    public String getCover() {
-        File localCover = new File(Constants.localCoverPath, bookId);
-        if (localCover.exists()) {
-            return localCover.getAbsolutePath();
-        } else {
-            File onlineCover = new File(Constants.onlineCoverPath, bookId);
-            if (onlineCover.exists()) {
-                return onlineCover.getAbsolutePath();
-            }
-        }
-        return null;
-    }
 }

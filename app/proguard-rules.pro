@@ -8,7 +8,6 @@
 -dontwarn android.content.**
 -keep class android.content.**
 
-#Google Books Api
--keep public class tr.name.fatihdogan.googlebooksapi.** {
-  public protected *;
-}
+#Retrofit
+-dontwarn okio.**
+-dontwarn javax.annotation.**

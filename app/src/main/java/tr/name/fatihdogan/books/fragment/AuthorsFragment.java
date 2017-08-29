@@ -14,8 +14,9 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import tr.name.fatihdogan.books.BaseApplication;
 import tr.name.fatihdogan.books.R;
-import tr.name.fatihdogan.books.repository.AppDatabase;
+import tr.name.fatihdogan.books.repository.BookDao;
 import tr.name.fatihdogan.books.view.AuthorView;
 
 public class AuthorsFragment extends BaseFragment {
@@ -89,11 +90,17 @@ public class AuthorsFragment extends BaseFragment {
 
     public static class MyViewModel extends ViewModel {
 
+        private final BookDao bookDao;
+
         LiveData<List<String>> authorsLiveData;
+
+        public MyViewModel() {
+            bookDao = BaseApplication.getAppComponent().bookDao();
+        }
 
         LiveData<List<String>> getAuthors() {
             if (authorsLiveData == null)
-                authorsLiveData = AppDatabase.getBookDao().getAllAuthorsLive();
+                authorsLiveData = bookDao.getAllAuthorsLive();
             return authorsLiveData;
         }
     }

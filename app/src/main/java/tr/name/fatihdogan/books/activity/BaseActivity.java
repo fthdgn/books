@@ -44,6 +44,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Lifecycl
      * @param intent   Intent which will be started
      * @param listener The listener which will be called when result is received
      */
+    @SuppressWarnings("WeakerAccess")
     public void startActivityForResult(@NonNull Intent intent, @NonNull ActivityResultListener listener) {
         startActivityForResult(intent, addActivityResultListener(listener));
     }
@@ -56,6 +57,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Lifecycl
      * @param listener Listener which will be called
      * @return Request code
      */
+    @SuppressWarnings("WeakerAccess")
     public int addActivityResultListener(@NonNull ActivityResultListener listener) {
         /*
          * Small possibility.

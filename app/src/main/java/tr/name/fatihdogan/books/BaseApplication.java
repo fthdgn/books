@@ -4,13 +4,20 @@ import android.app.Application;
 
 import tr.name.fatihdogan.books.callback.implementation.LogActivityLifecycleCallbacks;
 import tr.name.fatihdogan.books.callback.implementation.LogComponentCallbacks;
-import tr.name.fatihdogan.books.repository.AppDatabase;
+import tr.name.fatihdogan.books.dependecy.component.AppComponent;
+import tr.name.fatihdogan.books.dependecy.component.DaggerAppComponent;
+import tr.name.fatihdogan.books.dependecy.module.ApiModule;
+import tr.name.fatihdogan.books.dependecy.module.AppModule;
+import tr.name.fatihdogan.books.dependecy.module.NetworkModule;
+import tr.name.fatihdogan.books.dependecy.module.PicassoModule;
+import tr.name.fatihdogan.books.dependecy.module.PreferencesModule;
+import tr.name.fatihdogan.books.dependecy.module.RepositoryModule;
 import tr.name.fatihdogan.books.utils.LogUtils;
-import tr.name.fatihdogan.googlebooksapi.BooksApiManager;
 
 public class BaseApplication extends Application {
 
-    private static BaseApplication mInstance;
+    private static BaseApplication baseApplication;
+    private AppComponent appComponent;
 
     @Override
     public void onCreate() {
@@ -18,16 +25,18 @@ public class BaseApplication extends Application {
         LogUtils.lifecycle(this, "onCreate");
         registerComponentCallbacks(new LogComponentCallbacks());
         registerActivityLifecycleCallbacks(new LogActivityLifecycleCallbacks());
-
-        mInstance = this;
-        BooksApiManager.initialize(this);
-        BooksApiManager.getInstance().setDebugEnabled(BuildConfig.DEBUG);
-
-        AppDatabase.initialize(this);
+        baseApplication = this;
+        appComponent = DaggerAppComponent.builder().
+                apiModule(new ApiModule()).
+                appModule(new AppModule(this)).
+                repositoryModule(new RepositoryModule()).
+                preferencesModule(new PreferencesModule()).
+                networkModule(new NetworkModule()).
+                picassoModule(new PicassoModule()).
+                build();
     }
 
-    public static BaseApplication getInstance() {
-        return mInstance;
+    public static AppComponent getAppComponent() {
+        return baseApplication.appComponent;
     }
-
 }

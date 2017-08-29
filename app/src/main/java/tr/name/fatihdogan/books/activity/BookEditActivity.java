@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,18 +15,21 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 
+import tr.name.fatihdogan.books.BaseApplication;
 import tr.name.fatihdogan.books.R;
-import tr.name.fatihdogan.books.repository.AppDatabase;
+import tr.name.fatihdogan.books.api.ImageManager;
 import tr.name.fatihdogan.books.repository.Book;
+import tr.name.fatihdogan.books.repository.BookDao;
 import tr.name.fatihdogan.books.utils.EditTextUtils;
 import tr.name.fatihdogan.books.utils.ThreadUtils;
 
 public class BookEditActivity extends BaseActivity implements View.OnClickListener {
 
     private MyViewModel viewModel;
+
+    private ImageManager imageManager;
 
     @SuppressWarnings("FieldCanBeLocal")
     private String bookId;
@@ -47,6 +49,7 @@ public class BookEditActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        imageManager = BaseApplication.getAppComponent().imageManager();
         setContentView(R.layout.activity_book_edit);
         viewModel = ViewModelProviders.of(this).get(MyViewModel.class);
         if (getSupportActionBar() != null)
@@ -85,8 +88,8 @@ public class BookEditActivity extends BaseActivity implements View.OnClickListen
                 authorsEditText.setEnabled(authorsCheckBox.isChecked());
                 authorsEditText.setText(book.getFormattedAuthors());
 
-                if (book.getCover() != null)
-                    coverImageView.setImageURI(Uri.fromFile(new File(book.getCover())));
+                imageManager.load(bookId, coverImageView);
+
             }
         });
 
@@ -195,18 +198,24 @@ public class BookEditActivity extends BaseActivity implements View.OnClickListen
         finish();
     }
 
-    public static class MyViewModel extends ViewModel {
+    static class MyViewModel extends ViewModel {
 
         private LiveData<Book> bookLiveData;
 
+        private final BookDao bookDao;
+
+        public MyViewModel() {
+            bookDao = BaseApplication.getAppComponent().bookDao();
+        }
+
         LiveData<Book> getBook(String bookId) {
             if (bookLiveData == null)
-                bookLiveData = AppDatabase.getBookDao().getByIdLive(bookId);
+                bookLiveData = bookDao.getByIdLive(bookId);
             return bookLiveData;
         }
 
         void saveBook(Book book) {
-            ThreadUtils.runOnBackground(() -> AppDatabase.getBookDao().insertAll(book));
+            ThreadUtils.runOnBackground(() -> bookDao.insertAll(book));
         }
     }
 

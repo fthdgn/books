@@ -4,7 +4,7 @@ import android.arch.persistence.room.TypeConverters;
 
 import java.util.List;
 
-public class AuthorContainer {
+class AuthorContainer {
 
     @TypeConverters({AuthorConverter.class})
     private List<String> authors;

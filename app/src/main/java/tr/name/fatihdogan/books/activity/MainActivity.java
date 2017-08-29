@@ -12,17 +12,27 @@ import android.view.MenuItem;
 
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
+import tr.name.fatihdogan.books.BaseApplication;
 import tr.name.fatihdogan.books.R;
-import tr.name.fatihdogan.books.apimanager.ApiManager;
+import tr.name.fatihdogan.books.api.AccountManager;
 import tr.name.fatihdogan.books.fragment.AuthorsFragment;
 import tr.name.fatihdogan.books.fragment.BooksFragment;
+import tr.name.fatihdogan.books.repository.BookDao;
+import tr.name.fatihdogan.books.service.SyncService;
+import tr.name.fatihdogan.books.utils.ThreadUtils;
 
 public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+
+    private AccountManager accountManager;
+
+    private BookDao bookDao;
 
     private FragmentManager fragmentManager;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        accountManager = BaseApplication.getAppComponent().accountManager();
+        bookDao = BaseApplication.getAppComponent().bookDao();
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
 
@@ -102,7 +112,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         MenuItem login = menu.findItem(R.id.login_button);
         MenuItem logout = menu.findItem(R.id.logout_button);
         MenuItem sync = menu.findItem(R.id.sync_button);
-        boolean loggedin = ApiManager.getInstance().isLoggedIn(this);
+        boolean loggedin = accountManager.getAccount() != null;
 
         login.setVisible(!loggedin);
         sync.setVisible(loggedin);
@@ -115,15 +125,22 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.sync_button) {
-            ApiManager.sync(this, this::invalidateOptionsMenu);
+            startService(new Intent(this, SyncService.class));
             return true;
         } else if (id == R.id.login_button) {
-            ApiManager.sync(this, this::invalidateOptionsMenu);
+            startActivityForResult(new Intent(this, LoginActivity.class), (resultCode, data) -> {
+                if (resultCode == RESULT_OK) {
+                    startService(new Intent(this, SyncService.class));
+                    invalidateOptionsMenu();
+                }
+            });
             return true;
         } else if (id == R.id.logout_button) {
-            //TODO Clear
-            ApiManager.getInstance().setAccount(null, this);
-            invalidateOptionsMenu();
+            ThreadUtils.runOnBackground(() -> {
+                accountManager.removeAccount();
+                bookDao.deleteAll();
+                invalidateOptionsMenu();
+            });
             return true;
         }
 

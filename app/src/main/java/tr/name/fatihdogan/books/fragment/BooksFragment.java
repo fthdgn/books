@@ -18,9 +18,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
+import tr.name.fatihdogan.books.BaseApplication;
 import tr.name.fatihdogan.books.R;
-import tr.name.fatihdogan.books.repository.AppDatabase;
 import tr.name.fatihdogan.books.repository.Book;
+import tr.name.fatihdogan.books.repository.BookDao;
 import tr.name.fatihdogan.books.view.BookView;
 
 public class BooksFragment extends BaseFragment {
@@ -129,21 +130,27 @@ public class BooksFragment extends BaseFragment {
 
     public static class MyViewModel extends ViewModel {
 
+        final BookDao bookDao;
+
         LiveData<List<Book>> bookLiveData;
+
+        public MyViewModel() {
+            bookDao = BaseApplication.getAppComponent().bookDao();
+        }
 
         LiveData<List<Book>> getBooks(@Filter int filterType, String filterTerm) {
             if (bookLiveData == null) {
                 switch (filterType) {
                     case ALL:
-                        bookLiveData = AppDatabase.getBookDao().getAllSortedLive();
+                        bookLiveData = bookDao.getAllSortedLive();
                         break;
                     case AUTHORS:
-                        bookLiveData = AppDatabase.getBookDao().getByAuthorLive(filterTerm);
+                        bookLiveData = bookDao.getByAuthorLive(filterTerm);
                         break;
                     case BOOKSHELF:
                         //TODO Implement
                     default:
-                        bookLiveData = AppDatabase.getBookDao().getAllSortedLive();
+                        bookLiveData = bookDao.getAllSortedLive();
                 }
             }
             return bookLiveData;

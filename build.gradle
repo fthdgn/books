@@ -19,6 +19,5 @@ allprojects {
         jcenter()
         mavenCentral()
         maven { url "https://jitpack.io" }
-        maven { url "https://raw.githubusercontent.com/fthdgn/mvn-repo/master/" }
     }
 }
