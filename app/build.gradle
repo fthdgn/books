@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "tr.name.fatihdogan.books"
         minSdkVersion 16
@@ -33,9 +33,9 @@ android {
 }
 
 dependencies {
-    def supportVersion = '26.0.1'
-    def playServiceVersion = '11.2.0'
-    def archVersion = '1.0.0-alpha9'
+    def supportVersion = '26.1.0'
+    def playServiceVersion = '11.4.0'
+    def archVersion = '1.0.0-beta1'
     def retrofitVersion = '2.3.0'
     def daggerVersion = '2.11'
 
@@ -52,7 +52,7 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     implementation "com.google.dagger:dagger:$daggerVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.google.code.gson:gson:2.8.1'
+    implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.github.ittianyu:BottomNavigationViewEx:1.2.3'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'

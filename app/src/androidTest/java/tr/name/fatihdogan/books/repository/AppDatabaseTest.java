@@ -196,8 +196,7 @@ public class AppDatabaseTest {
 
     public static Book newBook(String id, String title, String sortTitle,
                                String authors, String originalTitle, String originalAuthors) {
-        Book book = new Book();
-        book.setBookId(id);
+        Book book = new Book(id);
         book.setTitle(title);
         book.setSortTitle(sortTitle);
         book.setOriginalTitle(originalTitle);
