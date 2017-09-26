@@ -16,6 +16,7 @@ import tr.name.fatihdogan.books.utils.ObjectUtils;
 public class Book {
 
     @PrimaryKey
+    @NonNull
     private String bookId;
 
     private String title;
@@ -30,12 +31,13 @@ public class Book {
     @TypeConverters({AuthorConverter.class})
     private List<String> originalAuthors;
 
-    public String getBookId() {
-        return bookId;
+    public Book(@NonNull String bookId) {
+        this.bookId = bookId;
     }
 
-    public void setBookId(String bookId) {
-        this.bookId = bookId;
+    @NonNull
+    public String getBookId() {
+        return bookId;
     }
 
     public String getTitle() {

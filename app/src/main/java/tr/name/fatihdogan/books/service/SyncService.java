@@ -69,8 +69,7 @@ public class SyncService extends IntentService {
             Volume volume = volumesList.get(i);
             Book book = bookDao.getById(volume.id);
             if (book == null) {
-                book = new Book();
-                book.setBookId(volume.id);
+                book = new Book(volume.id);
             }
             book.setOriginalAuthors(Arrays.asList(volume.volumeInfo.authors));
             book.setOriginalTitle(volume.volumeInfo.title);
