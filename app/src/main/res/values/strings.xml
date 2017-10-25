@@ -15,4 +15,8 @@
     <string name="sort_title">Sort Title</string>
     <string name="authors">Authors</string>
     <string name="edit_author_name">Edit author\'s name</string>
+    <string name="label">AAAA</string>
+    <string name="title_fmt">TİTE</string>
+    <string name="key1_action">ACT</string>
+    <string name="key1_summary">SUM</string>
 </resources>

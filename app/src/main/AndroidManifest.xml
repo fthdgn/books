@@ -27,5 +27,35 @@
         <service
             android:name=".service.SyncService"
             android:exported="false"/>
+        <activity android:name=".sync.LoginActivity"/>
+
+        <service
+            android:name=".sync.AuthenticatorService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator"/>
+        </service>
+        <service
+            android:name=".sync.SyncService"
+            android:enabled="true"
+            android:exported="true"><intent-filter>
+            <action android:name="android.content.SyncAdapter"/>
+        </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter"/>
+
+        </service>
+
+        <provider
+            android:name=".sync.StubProvider"
+            android:authorities="com.example.android.datasync.provider"
+            android:exported="false"
+            android:syncable="true"/>
     </application>
 </manifest>
