@@ -1,4 +1,4 @@
-package tr.name.fatihdogan.books.sync;
+package com.fthdgn.books.sync;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
@@ -10,7 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import tr.name.fatihdogan.books.utils.LogUtils;
+import com.fthdgn.books.utils.LogUtils;
 
 import static android.accounts.AccountManager.KEY_ERROR_CODE;
 import static android.accounts.AccountManager.KEY_ERROR_MESSAGE;

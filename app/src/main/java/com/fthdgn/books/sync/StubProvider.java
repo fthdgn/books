@@ -1,4 +1,4 @@
-package tr.name.fatihdogan.books.sync;
+package com.fthdgn.books.sync;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;

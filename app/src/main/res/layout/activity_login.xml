@@ -4,4 +4,4 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tr.name.fatihdogan.books.sync.LoginActivity"></android.support.constraint.ConstraintLayout>
+    tools:context=".sync.LoginActivity"></android.support.constraint.ConstraintLayout>

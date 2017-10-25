@@ -1,4 +1,4 @@
-package tr.name.fatihdogan.books.sync;
+package com.fthdgn.books.sync;
 
 import android.app.Service;
 import android.content.Intent;

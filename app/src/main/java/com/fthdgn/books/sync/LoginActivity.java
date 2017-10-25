@@ -1,4 +1,4 @@
-package tr.name.fatihdogan.books.sync;
+package com.fthdgn.books.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
@@ -6,8 +6,8 @@ import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.os.Bundle;
 
-import tr.name.fatihdogan.books.R;
-import tr.name.fatihdogan.books.activity.BaseActivity;
+import com.fthdgn.books.R;
+import com.fthdgn.books.activity.BaseActivity;
 
 public class LoginActivity extends BaseActivity {
 

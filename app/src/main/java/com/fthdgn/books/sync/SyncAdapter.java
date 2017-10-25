@@ -1,4 +1,4 @@
-package tr.name.fatihdogan.books.sync;
+package com.fthdgn.books.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -11,7 +11,7 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 
-import tr.name.fatihdogan.books.utils.LogUtils;
+import com.fthdgn.books.utils.LogUtils;
 
 /**
  * Created by fatih on 15/06/17.
