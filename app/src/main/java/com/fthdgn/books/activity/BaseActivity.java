@@ -1,7 +1,5 @@
 package com.fthdgn.books.activity;
 
-import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.content.Intent;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IntRange;
@@ -11,16 +9,7 @@ import android.util.SparseArray;
 
 import com.fthdgn.books.callback.ActivityResultListener;
 
-public abstract class BaseActivity extends AppCompatActivity implements LifecycleRegistryOwner {
-
-    //region LifecycleRegistryOwner
-    private final LifecycleRegistry mRegistry = new LifecycleRegistry(this);
-
-    @Override
-    public LifecycleRegistry getLifecycle() {
-        return mRegistry;
-    }
-    //endregion
+public abstract class BaseActivity extends AppCompatActivity {
 
     //region ActivityResultListener
     private final SparseArray<ActivityResultListener> activityResultListeners = new SparseArray<>();

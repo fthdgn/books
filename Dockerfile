@@ -16,18 +16,18 @@ RUN wget -q https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
     unzip -q sdk-tools-linux-4333796.zip -d android-sdk && \
     rm sdk-tools-linux-4333796.zip
 
-# Android SDK Platform-Tools r26.0.0
+# Android SDK Platform-Tools r26.0.1
 # For update: https://dl.google.com/android/repository/repository2-1.xml
-RUN wget -q https://dl.google.com/android/repository/platform-tools_r26.0.0-linux.zip && \
-    unzip -q platform-tools_r26.0.0-linux.zip -d android-sdk && \
-    rm platform-tools_r26.0.0-linux.zip
+RUN wget -q https://dl.google.com/android/repository/platform-tools_r26.0.1-linux.zip && \
+    unzip -q platform-tools_r26.0.1-linux.zip -d android-sdk && \
+    rm platform-tools_r26.0.1-linux.zip
 
-# Android SDK Build-Tools 26 r26.0.2
+# Android SDK Build-Tools 27 r27.0.0
 # For update: https://dl.google.com/android/repository/repository2-1.xml
-RUN wget -q https://dl.google.com/android/repository/build-tools_r26.0.2-linux.zip && \
-    unzip -q build-tools_r26.0.2-linux.zip -d android-sdk/build-tools && \
-    mv android-sdk/build-tools/android-8.1.0/ android-sdk/build-tools/26.0.2 && \
-    rm build-tools_r26.0.2-linux.zip
+RUN wget -q https://dl.google.com/android/repository/build-tools_r27-linux.zip && \
+    unzip -q build-tools_r27-linux.zip -d android-sdk/build-tools && \
+    mv android-sdk/build-tools/android-8.1.0/ android-sdk/build-tools/27.0.0 && \
+    rm build-tools_r27-linux.zip
 
 # Android SDK Platform 26 r2
 # For update: https://dl.google.com/android/repository/repository2-1.xml

@@ -6,10 +6,10 @@ import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.fthdgn.books.utils.ObjectUtils;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fthdgn.books.utils.ObjectUtils;
 
 @SuppressWarnings("WeakerAccess")
 @Entity
@@ -17,7 +17,7 @@ public class Book {
 
     @PrimaryKey
     @NonNull
-    private String bookId;
+    private final String bookId;
 
     private String title;
 
