@@ -1,8 +1,10 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "27.0.0"
+    buildToolsVersion "27.0.1"
     defaultConfig {
         applicationId "com.fthdgn.books"
         minSdkVersion 16
@@ -34,8 +36,8 @@ android {
 
 dependencies {
     def supportVersion = '26.1.0'
-    def playServiceVersion = '11.4.2'
-    def archVersion = '1.0.0-rc1'
+    def playServiceVersion = '11.6.0'
+    def archVersion = '1.0.0'
     def retrofitVersion = '2.3.0'
     def daggerVersion = '2.12'
 
@@ -57,21 +59,22 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
 
-    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
-    annotationProcessor "android.arch.persistence.room:compiler:$archVersion"
-    annotationProcessor "android.arch.lifecycle:compiler:$archVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    kapt "android.arch.persistence.room:compiler:$archVersion"
+    kapt "android.arch.lifecycle:compiler:$archVersion"
 
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     testImplementation 'junit:junit:4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
 /**
  * Signing files.
  * For file format look at signingExample.gradle
  *
- * Google Books API is core part of this app.
+ * Google Books API is core part of this getApplication.
  * You have to sign this application for both debug and release build.
  * Create a project from Google Cloud Platform
  * and enter your signing-certificate fingerprint
@@ -103,3 +106,6 @@ if (file('test.gradle').exists())
  */
 if (file('development.gradle').exists())
     apply from: 'development.gradle'
+repositories {
+    mavenCentral()
+}
